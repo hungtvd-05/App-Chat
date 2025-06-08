@@ -22,6 +22,14 @@ public class Chat_Right extends javax.swing.JLayeredPane {
     public void setImage(Icon... image) {
         txt.setImage(true, image);
     }
+    
+    public void setImage(String... image) {
+        txt.setImage(true, image);
+    }
+    
+    public void setFile(String fileName, String fileSize) {
+        txt.setFile(fileName, fileSize);
+    }
 
     public void setTime() {
         txt.setTime("10:30 PM");    

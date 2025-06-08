@@ -15,7 +15,7 @@ import javax.swing.JLayeredPane;
 import javax.swing.border.EmptyBorder;
 
 public class Chat_Item extends javax.swing.JLayeredPane {
-    
+
     private JLabel label;
 
     public Chat_Item() {
@@ -24,7 +24,7 @@ public class Chat_Item extends javax.swing.JLayeredPane {
         txt.setBackground(Color.WHITE);
         txt.setOpaque(false);
     }
-    
+
     public void setUserProfile(String user) {
         JLayeredPane layer = new JLayeredPane();
         layer.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
@@ -40,12 +40,12 @@ public class Chat_Item extends javax.swing.JLayeredPane {
         layer.add(cmd);
         add(layer, 0);
     }
-    
+
     public void setText(String text) {
         txt.setText(text);
     }
-    
-    public void setTime(String time) {  
+
+    public void setTime(String time) {
         JLayeredPane layer = new JLayeredPane();
         layer.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
         layer.setBorder(new EmptyBorder(0, 5, 5, 5));
@@ -55,29 +55,53 @@ public class Chat_Item extends javax.swing.JLayeredPane {
         layer.add(label);
         add(layer);
     }
-    
-     public void setImage(boolean right, Icon... image) {
+
+    public void setImage(boolean right, Icon... image) {
+        if (image.length > 0) {
+            JLayeredPane layer = new JLayeredPane();
+            layer.setLayout(new FlowLayout(right ? FlowLayout.RIGHT : FlowLayout.LEFT));
+            layer.setBorder(new EmptyBorder(0, 5, 0, 5));
+            Chat_Image chatImage = new Chat_Image(right);
+            chatImage.addImage(image);
+            layer.add(chatImage);
+            add(layer);
+        }
+    }
+
+    public void setImage(boolean right, String... image) {
+        if (image.length > 0) {
+            JLayeredPane layer = new JLayeredPane();
+            layer.setLayout(new FlowLayout(right ? FlowLayout.RIGHT : FlowLayout.LEFT));
+            layer.setBorder(new EmptyBorder(0, 5, 0, 5));
+            Chat_Image chatImage = new Chat_Image(right);
+            chatImage.addImage(image);
+            layer.add(chatImage);
+            add(layer);
+        }
+    }
+
+    public void setFile(String fileName, String fileSize) {
         JLayeredPane layer = new JLayeredPane();
-        layer.setLayout(new FlowLayout(right ? FlowLayout.RIGHT : FlowLayout.LEFT));
+        layer.setLayout(new FlowLayout(FlowLayout.LEFT));
         layer.setBorder(new EmptyBorder(0, 5, 0, 5));
-        Chat_Image chatImage = new Chat_Image(right);
-        chatImage.addImage(image);
-        layer.add(chatImage);
+        Chat_File chatFile = new Chat_File();
+        chatFile.setFile(fileName, fileSize);
+        layer.add(chatFile);
         add(layer);
     }
-    
+
     public void sendSuccess() {
         if (label != null) {
             label.setIcon(new ImageIcon(getClass().getResource("/com/app/icon/tick.png")));
         }
     }
-    
+
     public void seen() {
         if (label != null) {
             label.setIcon(new ImageIcon(getClass().getResource("/com/app/icon/double-tick.png")));
         }
     }
-    
+
     public void hideText() {
         txt.setVisible(false);
     }
@@ -89,10 +113,10 @@ public class Chat_Item extends javax.swing.JLayeredPane {
         txt = new com.app.swing.JIMSendTextPane();
 
         setBackground(new java.awt.Color(255, 255, 255));
-        setOpaque(true);
         setLayout(new javax.swing.BoxLayout(this, javax.swing.BoxLayout.PAGE_AXIS));
 
         txt.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        txt.setOpaque(false);
         add(txt);
     }// </editor-fold>//GEN-END:initComponents
 
@@ -104,8 +128,8 @@ public class Chat_Item extends javax.swing.JLayeredPane {
         g2.fillRoundRect(0, 0, getWidth(), getHeight(), 15, 15);
         super.paintComponent(g); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/OverriddenMethodBody
     }
-    
-    
+
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private com.app.swing.JIMSendTextPane txt;
     // End of variables declaration//GEN-END:variables
