@@ -12,11 +12,8 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.UIManager;
-<<<<<<< HEAD
 import io.socket.client.Ack;
-=======
 import lombok.Getter;
->>>>>>> 5f20cd541badf7ae654aa87a708f921873525dc5
 
 public class Main extends javax.swing.JFrame {
 
