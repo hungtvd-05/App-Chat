@@ -2,6 +2,8 @@ package com.app.main;
 
 import com.app.event.EventImageView;
 import com.app.event.PublicEvent;
+import com.app.model.Model_Register;
+import com.app.service.Service;
 import com.app.swing.ComponentResizer;
 import com.formdev.flatlaf.FlatLightLaf;
 import java.awt.Dimension;
@@ -10,7 +12,10 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.UIManager;
+
 import lombok.Getter;
+import io.socket.client.Ack;
+
 
 public class Main extends javax.swing.JFrame {
 
@@ -37,8 +42,40 @@ public class Main extends javax.swing.JFrame {
         view_Image.setVisible(false);
         login.setVisible(true);
         initEvent();
+        Service.getInstance().startServer();
+        testRegister();
     }
-    
+
+    public void testRegister() {
+        String username = "hahaha";
+        String password = "1234";
+        Model_Register data = new Model_Register(username, password);
+        if (PublicEvent.getInstance().getEventLogin() != null) {
+            System.out.println("hahahaha");
+            PublicEvent.getInstance().getEventLogin().register(data);
+        } else {
+            logger.severe("EventLogin is not initialized!");
+        }
+        Service.getInstance().getClient().emit("register", data.toJSONObject(), new Ack() {
+            @Override
+            public void call(Object... os) {
+
+            }
+        });
+    }
+
+//    public void testRegister() {
+//        String username = "hahaha";
+//        String password = "1234";
+//        Model_Register data = new Model_Register(username, password);
+//        PublicEvent.getInstance().getEventLogin().register(data);
+//        Service.getInstance().getClient().emit("register", data.toJSONObject(), new Ack(){
+//            @Override
+//            public void call(Object... os) {
+//                
+//            }
+//        });
+//    }
     private void initEvent() {
         PublicEvent.getInstance().addEventImageView(new EventImageView() {
             @Override
