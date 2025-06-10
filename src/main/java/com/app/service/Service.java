@@ -9,7 +9,7 @@ public class Service {
     private Socket client;
 
     private final int PORT_NUMBER = 9999;
-    private final String IP = "localhost";
+    private final String IP = "26.73.222.249";
     public static Service getInstance() {
         if (instance == null) {
             instance = new Service();

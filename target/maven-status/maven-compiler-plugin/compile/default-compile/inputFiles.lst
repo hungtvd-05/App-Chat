@@ -21,6 +21,8 @@ D:\project\App-Chat\src\main\java\com\app\component\PanelMessage.java
 D:\project\App-Chat\src\main\java\com\app\component\PanelVerifyMail.java
 D:\project\App-Chat\src\main\java\com\app\event\EventChat.java
 D:\project\App-Chat\src\main\java\com\app\event\EventImageView.java
+D:\project\App-Chat\src\main\java\com\app\event\EventLogin.java
+D:\project\App-Chat\src\main\java\com\app\event\EventMessage.java
 D:\project\App-Chat\src\main\java\com\app\event\PublicEvent.java
 D:\project\App-Chat\src\main\java\com\app\form\Chat.java
 D:\project\App-Chat\src\main\java\com\app\form\Home.java
@@ -29,6 +31,9 @@ D:\project\App-Chat\src\main\java\com\app\form\Menu_Left.java
 D:\project\App-Chat\src\main\java\com\app\form\Menu_Right.java
 D:\project\App-Chat\src\main\java\com\app\form\View_Image.java
 D:\project\App-Chat\src\main\java\com\app\main\Main.java
+D:\project\App-Chat\src\main\java\com\app\model\Model_Message.java
+D:\project\App-Chat\src\main\java\com\app\model\Model_Register.java
+D:\project\App-Chat\src\main\java\com\app\service\Service.java
 D:\project\App-Chat\src\main\java\com\app\swing\blurHash\Base83.java
 D:\project\App-Chat\src\main\java\com\app\swing\blurHash\BlurHash.java
 D:\project\App-Chat\src\main\java\com\app\swing\blurHash\SRGB.java

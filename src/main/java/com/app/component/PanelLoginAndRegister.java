@@ -4,6 +4,11 @@
  */
 package com.app.component;
 
+import com.app.event.EventMessage;
+import com.app.event.PublicEvent;
+import com.app.form.Login;
+import com.app.model.Model_Message;
+import com.app.model.Model_Register;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Font;
@@ -99,6 +104,31 @@ public class PanelLoginAndRegister extends javax.swing.JLayeredPane {
         cmd.setText("REGISTER");
         cmd.setFont(new Font("sansserif", Font.BOLD, 14));
         cmd.addActionListener(eventRegister);
+        cmd.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Model_Register data = new Model_Register(
+                        tfUser.getText().trim(),
+                        String.copyValueOf(pfPassword.getPassword()),
+                        tfFullName.getText().trim(),
+                        tfMail.getText().trim(),
+                        tfPhone.getText().trim()
+                );
+                PublicEvent.getInstance().getEventLogin().register(data, new EventMessage() {
+                    @Override
+                    public void callMessage(Model_Message message) {
+                        
+                        System.out.println("123");
+                        if (!message.isAction()) {
+                            Login.getInstance().showMessage(PanelMessage.MessageType.SUCCESS, message.getMessage());
+                        } else {
+                            PublicEvent.getInstance().getEventLogin().login();
+                        }
+                    }
+                });
+                
+            }
+        });
         register.add(cmd, "w 60%, h 40");
         register.setVisible(false);
 
@@ -215,6 +245,7 @@ public class PanelLoginAndRegister extends javax.swing.JLayeredPane {
     public void setEvent(ActionListener event) {
         this.event = event;
     }
+    
     
     public void showLogin(boolean show) {
         if (show) {

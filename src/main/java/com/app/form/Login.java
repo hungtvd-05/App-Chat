@@ -8,14 +8,22 @@ import com.app.component.PanelCover;
 import com.app.component.PanelLoginAndRegister;
 import com.app.component.PanelMessage;
 import com.app.component.PanelVerifyMail;
+import com.app.event.EventLogin;
+import com.app.event.EventMessage;
+import com.app.event.PublicEvent;
 import com.app.main.Main;
+import com.app.model.Model_Message;
+import com.app.model.Model_Register;
+import com.app.service.Service;
 import com.formdev.flatlaf.util.Animator;
+import io.socket.client.Ack;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.DecimalFormat;
 import javax.swing.JButton;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
+import lombok.Getter;
 import net.miginfocom.swing.MigLayout;
 import org.jdesktop.core.animation.timing.TimingTarget;
 import org.jdesktop.core.animation.timing.TimingTargetAdapter;
@@ -41,13 +49,52 @@ public class Login extends javax.swing.JLayeredPane {
     private boolean isLogin = true;
     private final DecimalFormat df = new DecimalFormat("##0.###");
     
+    @Getter
+    private static Login instance = null;
+    
     
     public Login() {
+        instance = this;
         initComponents();
         init();
     }
     
     private void init() {
+        
+        PublicEvent.getInstance().setEventLogin(new EventLogin() {
+            @Override
+            public void login() {
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        
+                    }
+                });
+            }
+
+            @Override
+            public void register(Model_Register data, EventMessage message) {
+                Service.getInstance().getClient().emit("register", data.toJSONObject(), new Ack() {
+                    @Override
+                    public void call(Object... os) {
+                        if (os.length > 0) {
+                            Model_Message ms = new Model_Message((boolean)os[0], os.length > 1 && os[1] != null ? os[1].toString() : "");
+                            message.callMessage(ms);
+                        }
+                    }
+                });
+            }
+
+            @Override
+            public void goRegister() {
+            }
+
+            @Override
+            public void goLogin() {
+            }
+        });
+        
+        
         
         
         ActionListener eventRegister = new ActionListener() {

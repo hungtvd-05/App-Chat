@@ -43,39 +43,10 @@ public class Main extends javax.swing.JFrame {
         login.setVisible(true);
         initEvent();
         Service.getInstance().startServer();
-        testRegister();
     }
 
-    public void testRegister() {
-        String username = "hahaha";
-        String password = "1234";
-        Model_Register data = new Model_Register(username, password);
-        if (PublicEvent.getInstance().getEventLogin() != null) {
-            System.out.println("hahahaha");
-            PublicEvent.getInstance().getEventLogin().register(data);
-        } else {
-            logger.severe("EventLogin is not initialized!");
-        }
-        Service.getInstance().getClient().emit("register", data.toJSONObject(), new Ack() {
-            @Override
-            public void call(Object... os) {
 
-            }
-        });
-    }
 
-//    public void testRegister() {
-//        String username = "hahaha";
-//        String password = "1234";
-//        Model_Register data = new Model_Register(username, password);
-//        PublicEvent.getInstance().getEventLogin().register(data);
-//        Service.getInstance().getClient().emit("register", data.toJSONObject(), new Ack(){
-//            @Override
-//            public void call(Object... os) {
-//                
-//            }
-//        });
-//    }
     private void initEvent() {
         PublicEvent.getInstance().addEventImageView(new EventImageView() {
             @Override
