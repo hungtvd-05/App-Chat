@@ -10,14 +10,22 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JFrame;
 import javax.swing.UIManager;
+<<<<<<< HEAD
 import io.socket.client.Ack;
+=======
+import lombok.Getter;
+>>>>>>> 5f20cd541badf7ae654aa87a708f921873525dc5
 
 public class Main extends javax.swing.JFrame {
 
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(Main.class.getName());
+    
+    private static Main instance;
 
     public Main() {
+        this.instance = this;
         initComponents();
         init();
     }
@@ -33,7 +41,7 @@ public class Main extends javax.swing.JFrame {
         com.setMaximumSize(Toolkit.getDefaultToolkit().getScreenSize());
         com.setSnapSize(new Dimension(10, 10));
         view_Image.setVisible(false);
-        home.setVisible(true);
+        login.setVisible(true);
         initEvent();
         Service.getInstance().startServer();
         testRegister();
@@ -82,6 +90,15 @@ public class Main extends javax.swing.JFrame {
             }
         });
     }
+    
+    public static Main getInstance() {
+        return instance;
+    }
+    
+    public void showHome() {
+        login.setVisible(false);
+        home.setVisible(true);
+    }
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -92,6 +109,7 @@ public class Main extends javax.swing.JFrame {
         body = new javax.swing.JLayeredPane();
         view_Image = new com.app.form.View_Image();
         home = new com.app.form.Home();
+        login = new com.app.form.Login();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(255, 255, 255));
@@ -104,6 +122,7 @@ public class Main extends javax.swing.JFrame {
         body.setLayer(view_Image, javax.swing.JLayeredPane.POPUP_LAYER);
         body.add(view_Image, "card3");
         body.add(home, "card2");
+        body.add(login, "card4");
 
         javax.swing.GroupLayout backgroundLayout = new javax.swing.GroupLayout(background);
         background.setLayout(backgroundLayout);
@@ -181,6 +200,7 @@ public class Main extends javax.swing.JFrame {
     private javax.swing.JLayeredPane body;
     private javax.swing.JPanel border;
     private com.app.form.Home home;
+    private com.app.form.Login login;
     private com.app.form.View_Image view_Image;
     // End of variables declaration//GEN-END:variables
 }
