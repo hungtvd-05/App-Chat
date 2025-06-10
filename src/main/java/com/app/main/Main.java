@@ -1,6 +1,7 @@
 package com.app.main;
 
 import com.app.event.EventImageView;
+import com.app.event.EventMain;
 import com.app.event.PublicEvent;
 import com.app.model.Model_Register;
 import com.app.service.Service;
@@ -40,6 +41,7 @@ public class Main extends javax.swing.JFrame {
         com.setMaximumSize(Toolkit.getDefaultToolkit().getScreenSize());
         com.setSnapSize(new Dimension(10, 10));
         view_Image.setVisible(false);
+        loading.setVisible(false);
         login.setVisible(true);
         initEvent();
         Service.getInstance().startServer();
@@ -48,6 +50,22 @@ public class Main extends javax.swing.JFrame {
 
 
     private void initEvent() {
+        
+        PublicEvent.getInstance().setEventMain(new EventMain() {
+            @Override
+            public void showLoading(boolean show) {
+                loading.setVisible(show);
+            }
+
+            @Override
+            public void initChat() {
+                home.setVisible(true);
+                login.setVisible(false);
+                Service.getInstance().getClient().emit("list_user", Service.getInstance().getUserAccount().getUserId());
+                
+            }
+        });
+        
         PublicEvent.getInstance().addEventImageView(new EventImageView() {
             @Override
             public void viewImage(Icon image) {
@@ -58,6 +76,8 @@ public class Main extends javax.swing.JFrame {
             public void saveImage(Icon image) {
                 System.out.println("11111");
             }
+            
+            
         });
     }
     
@@ -65,10 +85,6 @@ public class Main extends javax.swing.JFrame {
         return instance;
     }
     
-    public void showHome() {
-        login.setVisible(false);
-        home.setVisible(true);
-    }
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -77,6 +93,7 @@ public class Main extends javax.swing.JFrame {
         border = new javax.swing.JPanel();
         background = new javax.swing.JPanel();
         body = new javax.swing.JLayeredPane();
+        loading = new com.app.form.Loading();
         view_Image = new com.app.form.View_Image();
         home = new com.app.form.Home();
         login = new com.app.form.Login();
@@ -89,6 +106,7 @@ public class Main extends javax.swing.JFrame {
         background.setBackground(new java.awt.Color(255, 255, 255));
 
         body.setLayout(new java.awt.CardLayout());
+        body.add(loading, "card5");
         body.setLayer(view_Image, javax.swing.JLayeredPane.POPUP_LAYER);
         body.add(view_Image, "card3");
         body.add(home, "card2");
@@ -170,6 +188,7 @@ public class Main extends javax.swing.JFrame {
     private javax.swing.JLayeredPane body;
     private javax.swing.JPanel border;
     private com.app.form.Home home;
+    private com.app.form.Loading loading;
     private com.app.form.Login login;
     private com.app.form.View_Image view_Image;
     // End of variables declaration//GEN-END:variables

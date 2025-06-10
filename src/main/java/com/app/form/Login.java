@@ -12,8 +12,10 @@ import com.app.event.EventLogin;
 import com.app.event.EventMessage;
 import com.app.event.PublicEvent;
 import com.app.main.Main;
+import com.app.model.Model_Login;
 import com.app.model.Model_Message;
 import com.app.model.Model_Register;
+import com.app.model.UserAccount;
 import com.app.service.Service;
 import com.formdev.flatlaf.util.Animator;
 import io.socket.client.Ack;
@@ -63,13 +65,38 @@ public class Login extends javax.swing.JLayeredPane {
         
         PublicEvent.getInstance().setEventLogin(new EventLogin() {
             @Override
-            public void login() {
+            public void login(Model_Login data) {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
+                        PublicEvent.getInstance().getEventMain().showLoading(true);
+                        
+                        System.out.println(data.toJsonObject().toString());
+
+                        Service.getInstance().getClient().emit("login", data.toJsonObject(), new Ack() {
+                            @Override
+                            public void call(Object... os) {
+                                if (os.length > 0) {
+                                    boolean action = (boolean)os[0];
+                                    if (action) {
+                                        Service.getInstance().setUserAccount(new UserAccount(os[1]));
+                                        PublicEvent.getInstance().getEventMain().initChat();
+                                        PublicEvent.getInstance().getEventMain().showLoading(false);
+                                        Main.getInstance().setTitle(Service.getInstance().getUserAccount().getUserName());
+                                        setVisible(false);
+                                    } else {
+                                        PublicEvent.getInstance().getEventMain().showLoading(false);
+                                        Login.getInstance().showMessage(PanelMessage.MessageType.ERROR, "Sai mat khau");
+                                    }
+                                } else {
+                                    PublicEvent.getInstance().getEventMain().showLoading(false);
+                                }
+                            }
+                        });
+                        
                         
                     }
-                });
+                }).start();
             }
 
             @Override
@@ -79,8 +106,21 @@ public class Login extends javax.swing.JLayeredPane {
                     public void call(Object... os) {
                         if (os.length > 0) {
                             Model_Message ms = new Model_Message((boolean)os[0], os.length > 1 && os[1] != null ? os[1].toString() : "");
+                            
+                            
+                            
+                            if (ms.isAction()) {
+                                UserAccount userAccount = new UserAccount((Object)os[2]);
+                                Service.getInstance().setUserAccount(userAccount);
+                                Main.getInstance().setTitle(userAccount.getUserName());
+                            }
+                            
                             message.callMessage(ms);
+                            
+                            
                         }
+                        System.out.println("Hello 5");
+                        
                     }
                 });
             }
@@ -108,7 +148,6 @@ public class Login extends javax.swing.JLayeredPane {
             @Override
             public void actionPerformed(ActionEvent e) {
 //                Đăng nhập
-                Main.getInstance().showHome();
             }
         };
         

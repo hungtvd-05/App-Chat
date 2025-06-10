@@ -7,6 +7,7 @@ package com.app.component;
 import com.app.event.EventMessage;
 import com.app.event.PublicEvent;
 import com.app.form.Login;
+import com.app.model.Model_Login;
 import com.app.model.Model_Message;
 import com.app.model.Model_Register;
 import java.awt.Color;
@@ -118,11 +119,10 @@ public class PanelLoginAndRegister extends javax.swing.JLayeredPane {
                     @Override
                     public void callMessage(Model_Message message) {
                         
-                        System.out.println("123");
                         if (!message.isAction()) {
                             Login.getInstance().showMessage(PanelMessage.MessageType.SUCCESS, message.getMessage());
                         } else {
-                            PublicEvent.getInstance().getEventLogin().login();
+                            PublicEvent.getInstance().getEventMain().initChat();
                         }
                     }
                 });
@@ -213,7 +213,19 @@ public class PanelLoginAndRegister extends javax.swing.JLayeredPane {
         cmd.setRadius(10);
         cmd.setText("LOGIN");
         cmd.setFont(new Font("sansserif", Font.BOLD, 14));
-         cmd.addActionListener(eventLogin);
+        cmd.addActionListener(eventLogin);
+        cmd.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                PublicEvent
+                        .getInstance()
+                        .getEventLogin()
+                        .login(new Model_Login(
+                                tfUser.getText(),
+                                String.copyValueOf(pfPassword.getPassword()
+                                )));
+            }
+        });
         login.add(cmd, "w 60%, h 40");
 
         JSeparator jSeparator = new JSeparator();

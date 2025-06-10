@@ -1,12 +1,22 @@
 package com.app.form;
 
 import com.app.component.Item_People;
+import com.app.event.EventMenuLeft;
+import com.app.event.PublicEvent;
+import com.app.model.UserAccount;
 import java.awt.Color;
+import java.awt.Component;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JScrollBar;
+import lombok.Setter;
 import net.miginfocom.swing.MigLayout;
 
 public class Menu_Left extends javax.swing.JPanel {
 
+    @Setter
+    private List<UserAccount> userAccountList;
+    
     public Menu_Left() {
         initComponents();
         init();
@@ -16,28 +26,79 @@ public class Menu_Left extends javax.swing.JPanel {
         sp.setVerticalScrollBar(new JScrollBar());
         sp.getVerticalScrollBar().setBackground(Color.WHITE);
         menuList.setLayout(new MigLayout("fillx, wrap", "0[100%]0", "0[]0"));
+        userAccountList = new ArrayList<>();
+        PublicEvent.getInstance().setEventMenuLeft(new EventMenuLeft() {
+            @Override
+            public void newUser(List<UserAccount> users) {
+                for (UserAccount d : users) {
+                    userAccountList.add(d);
+                    menuList.add(new Item_People(d), "wrap");
+                    refreshMenuList();
+                }
+            }
+
+            @Override
+            public void userConnect(Long userId) {
+                for (UserAccount u: userAccountList) {
+                    if (u.getUserId() == userId) {
+                        u.setStatus(true);
+                        break;
+                    }
+                }
+                if (menuMessage.isSelected()) {
+                    for (Component com: menuList.getComponents()) {
+                        Item_People item = (Item_People) com;
+                        if (item.getUserAccount().getUserId() == userId) {
+                            item.updateStatus();
+                            break;
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void userDisconnect(Long userId) {
+                for (UserAccount u: userAccountList) {
+                    if (u.getUserId() == userId) {
+                        u.setStatus(false);
+                        break;
+                    }
+                }
+                if (menuMessage.isSelected()) {
+                    for (Component com: menuList.getComponents()) {
+                        Item_People item = (Item_People) com;
+                        if (item.getUserAccount().getUserId() == userId) {
+                            item.updateStatus();
+                            break;
+                        }
+                    }
+                }
+            }
+        });
         showPeople();
     }
 
     private void showPeople() {
         menuList.removeAll();
-        for (int i = 0; i < 30; i++) {
-            menuList.add(new Item_People("People " + i), "growx, wrap");
+        for (UserAccount d: userAccountList) {
+            menuList.add(new Item_People(d), "wrap");
         }
+        refreshMenuList();
     }
     
     private void showGroup() {
         menuList.removeAll();
         for (int i = 0; i < 5; i++) {
-            menuList.add(new Item_People("Group " + i), "growx, wrap");
+            menuList.add(new Item_People(null), "growx, wrap");
         }
     }
     
     private void showBox() {
         menuList.removeAll();
         for (int i = 0; i < 30; i++) {
-            menuList.add(new Item_People("Box " + i), "growx, wrap");
+            menuList.add(new Item_People(null), "growx, wrap");
         }
+        refreshMenuList();
     }
     
     private void refreshMenuList() {

@@ -1,11 +1,15 @@
 package com.app.event;
 
+import lombok.Getter;
+
 public class PublicEvent {
 
     private static PublicEvent instance;
     private EventImageView eventImageView;
     private EventChat eventChat;
     private EventLogin eventLogin;
+    private EventMain eventMain;
+    private EventMenuLeft eventMenuLeft;
     
     public static PublicEvent getInstance() {
         if (instance == null) {
@@ -41,4 +45,24 @@ public class PublicEvent {
     public EventChat getEventChat() {
         return eventChat;
     }
+
+    public EventMain getEventMain() {
+        return eventMain;
+    }
+
+    public void setEventMain(EventMain eventMain) {
+        this.eventMain = eventMain;
+    }
+
+    public EventMenuLeft getEventMenuLeft() {
+        return eventMenuLeft;
+    }
+
+    public void setEventMenuLeft(EventMenuLeft eventMenuLeft) {
+        this.eventMenuLeft = eventMenuLeft;
+    }
+    
+    
+    
+    
 }

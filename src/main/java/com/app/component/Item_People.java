@@ -4,9 +4,11 @@
  */
 package com.app.component;
 
+import com.app.model.UserAccount;
 import java.awt.Color;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import lombok.Getter;
 
 /**
  *
@@ -17,10 +19,20 @@ public class Item_People extends javax.swing.JPanel {
     /**
      * Creates new form Item_People
      */
-    public Item_People(String name) {
+    
+    @Getter
+    private UserAccount userAccount;
+    
+    public Item_People(UserAccount userAccount) {
+        this.userAccount = userAccount;
         initComponents();
-        lb.setText(name);
+        lb.setText(userAccount.getUserName());
+        activeStatus.setActive(userAccount.isStatus());
         init();
+    }
+    
+    public void updateStatus() {
+        activeStatus.setActive(userAccount.isStatus());
     }
     
     private void init() {
@@ -49,6 +61,8 @@ public class Item_People extends javax.swing.JPanel {
 
         imageAvatar1 = new com.app.swing.ImageAvatar();
         lb = new javax.swing.JLabel();
+        lbStatus = new javax.swing.JLabel();
+        activeStatus = new com.app.swing.ActiveStatus();
 
         setBackground(new java.awt.Color(255, 255, 255));
 
@@ -58,6 +72,12 @@ public class Item_People extends javax.swing.JPanel {
         lb.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         lb.setText("Name");
 
+        lbStatus.setFont(new java.awt.Font("Segoe UI", 2, 12)); // NOI18N
+        lbStatus.setForeground(new java.awt.Color(138, 138, 138));
+        lbStatus.setText("Name");
+
+        activeStatus.setActive(true);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -66,25 +86,40 @@ public class Item_People extends javax.swing.JPanel {
                 .addContainerGap()
                 .addComponent(imageAvatar1, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(lb, javax.swing.GroupLayout.DEFAULT_SIZE, 147, Short.MAX_VALUE)
-                .addContainerGap())
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lb, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(lbStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(2, 2, 2)
+                        .addComponent(activeStatus, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 102, Short.MAX_VALUE)))
+                .addGap(0, 0, 0))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lb, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(imageAvatar1, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addComponent(lb)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(10, 10, 10)
+                                .addComponent(lbStatus))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(activeStatus, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(2, 2, 2))))
+                    .addComponent(imageAvatar1, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private com.app.swing.ActiveStatus activeStatus;
     private com.app.swing.ImageAvatar imageAvatar1;
     private javax.swing.JLabel lb;
+    private javax.swing.JLabel lbStatus;
     // End of variables declaration//GEN-END:variables
 }
