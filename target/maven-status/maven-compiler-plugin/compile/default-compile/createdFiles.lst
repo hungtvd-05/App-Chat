@@ -12,13 +12,17 @@ com\app\form\Chat.class
 com\app\swing\ImageAvatar.class
 com\app\form\Menu_Left$2.class
 com\app\component\Image_Item.class
+com\app\service\Service.class
 com\app\main\Main.class
 com\app\component\Item_People$1.class
 com\app\component\Chat_Bottom.class
 com\app\event\PublicEvent.class
 com\app\form\Menu_Right.class
+com\app\model\Model_Register.class
+com\app\main\Main$2.class
 com\app\component\Chat_File.class
 com\app\component\Item_People.class
+com\app\event\EventLogin.class
 com\app\event\EventImageView.class
 com\app\form\Home.class
 com\app\component\Chat_Left_With_Profile.class
