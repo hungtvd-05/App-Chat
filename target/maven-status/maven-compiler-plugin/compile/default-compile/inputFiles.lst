@@ -40,8 +40,10 @@ D:\project\App-Chat\src\main\java\com\app\form\Menu_Right.java
 D:\project\App-Chat\src\main\java\com\app\form\View_Image.java
 D:\project\App-Chat\src\main\java\com\app\main\Main.java
 D:\project\App-Chat\src\main\java\com\app\model\History.java
+D:\project\App-Chat\src\main\java\com\app\model\Model_File_Sender.java
 D:\project\App-Chat\src\main\java\com\app\model\Model_Login.java
 D:\project\App-Chat\src\main\java\com\app\model\Model_Message.java
+D:\project\App-Chat\src\main\java\com\app\model\Model_Package_Sender.java
 D:\project\App-Chat\src\main\java\com\app\model\Model_Receive_Message.java
 D:\project\App-Chat\src\main\java\com\app\model\Model_Register.java
 D:\project\App-Chat\src\main\java\com\app\model\Model_Send_Message.java

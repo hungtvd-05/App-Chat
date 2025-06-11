@@ -1,5 +1,6 @@
 package com.app.component;
 
+import com.app.model.Model_File_Sender;
 import com.app.swing.blurHash.BlurHash;
 import java.awt.image.BufferedImage;
 import javax.swing.Icon;
@@ -10,7 +11,11 @@ public class Image_Item extends javax.swing.JLayeredPane {
     public Image_Item() {
         initComponents();
     }
-
+    
+    public void setImage(Icon image, Model_File_Sender fileSender) {
+        pic.setImage(image);
+    }
+    
     public void setImage(String image) {
         int width = 200;
         int height = 200;
@@ -35,7 +40,6 @@ public class Image_Item extends javax.swing.JLayeredPane {
         progress1.setBackground(new java.awt.Color(242, 242, 242));
         progress1.setForeground(new java.awt.Color(102, 102, 102));
         progress1.setToolTipText("");
-        progress1.setValue(50);
         progress1.setProgressType(com.app.swing.Progress.ProgressType.CANCEL);
 
         pic.setLayer(progress1, javax.swing.JLayeredPane.DEFAULT_LAYER);

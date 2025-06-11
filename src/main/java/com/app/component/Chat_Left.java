@@ -1,5 +1,6 @@
 package com.app.component;
 
+import com.app.model.Model_File_Sender;
 import com.app.util.Utils;
 import java.awt.Color;
 import java.time.LocalDateTime;
@@ -20,8 +21,8 @@ public class Chat_Left extends javax.swing.JLayeredPane {
         }
     }
        
-    public void setImage(Icon... image) {
-        txt.setImage(false, image);
+    public void setImage(Model_File_Sender fileSender) {
+        txt.setImage(false, fileSender);
     }
     
     public void setFile(String fileName, String fileSize) {

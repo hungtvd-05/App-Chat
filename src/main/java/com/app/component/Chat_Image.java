@@ -1,6 +1,7 @@
 package com.app.component;
 
 import com.app.event.PublicEvent;
+import com.app.model.Model_File_Sender;
 import com.app.swing.PictureBox;
 import java.awt.Component;
 import java.awt.Cursor;
@@ -8,6 +9,7 @@ import java.awt.Dimension;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.SwingUtilities;
 import net.miginfocom.swing.MigLayout;
 
@@ -19,14 +21,13 @@ public class Chat_Image extends javax.swing.JPanel {
         setLayout(new MigLayout("", "0[" + (right ? "right" : "left") + "]0", "3[]3"));
     }
 
-    public void addImage(Icon... images) {
-        for (Icon image : images) {
-            PictureBox pic = new PictureBox();
-            pic.setPreferredSize(getAutoSize(image, 200, 200));
-            pic.setImage(image);
-            addEvent(pic, image);
-            add(pic, "wrap");
-        }
+    public void addImage(Model_File_Sender fileSender) {
+        Icon image = new ImageIcon(fileSender.getFile().getAbsolutePath());
+        Image_Item pic = new Image_Item();
+        pic.setPreferredSize(getAutoSize(image, 200, 200));
+        pic.setImage(image, fileSender);
+        addEvent(pic, image);
+        add(pic, "wrap");
     }
     
     public void addImage(String... images) {

@@ -1,11 +1,15 @@
 package com.app.service;
 
 import com.app.event.PublicEvent;
+import com.app.model.Model_File_Sender;
 import com.app.model.Model_Receive_Message;
+import com.app.model.Model_Send_Message;
 import com.app.model.UserAccount;
 import io.socket.client.IO;
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
+import java.io.File;
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,11 +32,13 @@ public class Service {
     @Getter
     @Setter
     private UserAccount userAccount;
+    private List<Model_File_Sender> fileSender;
     
-    
-    
-    private Service() {
+    public Service() {
+        fileSender = new ArrayList<>();
     }
+    
+
     public void startServer() {
         try {
             client = IO.socket("http://" + IP + ":" + PORT_NUMBER);
@@ -72,6 +78,24 @@ public class Service {
             client.open();
         } catch (URISyntaxException ex) {
             System.getLogger(Service.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
+        }
+    }
+    
+    public Model_File_Sender addFile(File file, Model_Send_Message message) throws IOException {
+        Model_File_Sender data = new Model_File_Sender(file, client, message);
+        message.setFile(data);
+        fileSender.add(data);
+        if (fileSender.size() == 1) {
+            data.initSend();
+        }
+        return data;
+    }
+
+    public void fileSendFinish(Model_File_Sender data) throws IOException {
+        fileSender.remove(data);
+        if (!fileSender.isEmpty()) {
+            //  Start send new file when old file sending finish
+            fileSender.get(0).initSend();
         }
     }
     
