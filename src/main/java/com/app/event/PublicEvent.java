@@ -1,0 +1,68 @@
+package com.app.event;
+
+import lombok.Getter;
+
+public class PublicEvent {
+
+    private static PublicEvent instance;
+    private EventImageView eventImageView;
+    private EventChat eventChat;
+    private EventLogin eventLogin;
+    private EventMain eventMain;
+    private EventMenuLeft eventMenuLeft;
+    
+    public static PublicEvent getInstance() {
+        if (instance == null) {
+            instance = new PublicEvent();
+        }
+        return instance;
+    }
+
+    private PublicEvent() {
+
+    }
+    
+    public EventLogin getEventLogin() {
+        return eventLogin;
+    }
+
+    public void setEventLogin(EventLogin eventLogin) {
+        this.eventLogin = eventLogin;
+    }
+
+    public void addEventImageView(EventImageView event) {
+        this.eventImageView = event;
+    }
+    
+    public void addEventChat(EventChat event) {
+        this.eventChat = event;
+    }
+
+    public EventImageView getEventImageView() {
+        return eventImageView;
+    }
+    
+    public EventChat getEventChat() {
+        return eventChat;
+    }
+
+    public EventMain getEventMain() {
+        return eventMain;
+    }
+
+    public void setEventMain(EventMain eventMain) {
+        this.eventMain = eventMain;
+    }
+
+    public EventMenuLeft getEventMenuLeft() {
+        return eventMenuLeft;
+    }
+
+    public void setEventMenuLeft(EventMenuLeft eventMenuLeft) {
+        this.eventMenuLeft = eventMenuLeft;
+    }
+    
+    
+    
+    
+}
