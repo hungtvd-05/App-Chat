@@ -5,6 +5,8 @@ import com.app.component.Chat_Bottom;
 import com.app.component.Chat_Title;
 import com.app.event.EventChat;
 import com.app.event.PublicEvent;
+import com.app.model.Model_Receive_Message;
+import com.app.model.Model_Send_Message;
 import com.app.model.UserAccount;
 import net.miginfocom.swing.MigLayout;
 
@@ -20,14 +22,21 @@ public class Chat extends javax.swing.JPanel {
     }
     
     private void init() {
-        setLayout(new MigLayout("fillx", "0[fill]0", "2[]5[100%, bottom]0[shrink 0]0"));
+        setLayout(new MigLayout("fillx", "0[fill]0", "5[]0[100%, fill]0[shrink 0]0"));
         chatTitle = new Chat_Title();
         chatBody = new Chat_Body();
         chatBottom = new Chat_Bottom();
         PublicEvent.getInstance().addEventChat(new EventChat() {
             @Override
-            public void sendMessage(String text) {
-                chatBody.addItemRight(text);
+            public void sendMessage(Model_Send_Message data) {
+                chatBody.addItemRight(data);
+            }
+
+            @Override
+            public void reiceveMessage(Model_Receive_Message data) {
+                if (chatTitle.getUser().getUserId() == data.getFromUserID()) {
+                    chatBody.addItemLeft(data);
+                }
             }
         });
         add(chatTitle, "wrap");
@@ -38,6 +47,7 @@ public class Chat extends javax.swing.JPanel {
     public void setUser(UserAccount user) {
         chatTitle.setUserName(user);
         chatBottom.setUser(user);
+        chatBody.clearChat();
     }
     
     public void updateUser(UserAccount user) {

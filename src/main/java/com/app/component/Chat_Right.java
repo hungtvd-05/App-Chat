@@ -1,6 +1,8 @@
 package com.app.component;
 
+import com.app.util.Utils;
 import java.awt.Color;
+import java.time.LocalDateTime;
 import javax.swing.Icon;
 
 public class Chat_Right extends javax.swing.JLayeredPane {
@@ -30,10 +32,16 @@ public class Chat_Right extends javax.swing.JLayeredPane {
     public void setFile(String fileName, String fileSize) {
         txt.setFile(fileName, fileSize);
     }
-
-    public void setTime() {
-        txt.setTime("10:30 PM");    
+    
+    public void setEmoji(Icon icon) {
+        txt.hideText();
+        txt.setEmoji(true, icon);
     }
+
+    public void setTime(LocalDateTime time) {
+        txt.setTime(Utils.formatTime(time));    
+    }
+    
     
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents

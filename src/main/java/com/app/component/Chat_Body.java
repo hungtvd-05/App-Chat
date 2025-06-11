@@ -1,5 +1,9 @@
 package com.app.component;
 
+import com.app.emoji.Emogi;
+import com.app.enums.MessageType;
+import com.app.model.Model_Receive_Message;
+import com.app.model.Model_Send_Message;
 import java.awt.Adjustable;
 import java.awt.Color;
 import java.awt.event.AdjustmentEvent;
@@ -15,32 +19,6 @@ public class Chat_Body extends javax.swing.JPanel {
     public Chat_Body() {
         initComponents();
         init();
-//        addItemRight("I'm having issue with the wrapping.... When i get to 80% of the witdthm the rest it just doesnt show it...");
-//        addItemRight("I'm having issue with the wrapping.... When i get to 80% of the witdthm the rest it just doesnt show it...");
-//        addItemLeft("Hellllllloooo", "hahahahahah");
-//        addItemRight("I'm having issue with the wrapping.... When i get to 80% of the witdthm the rest it just doesnt show it...");
-//        addItemRight("I'm having issue with the wrapping.... When i get to 80% of the witdthm the rest it just doesnt show it...");
-//        addItemLeft("Hellllllloooo", "hahahahahah");
-//        addItemRight("I'm having issue with the wrapping.... When i get to 80% of the witdthm the rest it just doesnt show it...");
-//        addItemRight("I'm having issue with the wrapping.... When i get to 80% of the witdthm the rest it just doesnt show it...");
-//        addItemLeft("Hellllllloooo", "hahahahahah");
-//        String img[] = {"L68EoVt80JNdpyXBrpt7DNRjrps;"};
-//        addItemRight("I'm having issue with the wrapping.... When i get to 80% of the witdthm the rest it just doesnt show it...");
-//        addItemRight("I'm having issue with the wrapping.... When i get to 80% of the witdthm the rest it just doesnt show it...");
-//        addItemLeft("Hellllllloooo", "hahahahahah", img);
-//        addItemRight("I'm having issue with the wrapping.... When i get to 80% of the witdthm the rest it just doesnt show it...");
-//        addItemRight("I'm having issue with the wrapping.... When i get to 80% of the witdthm the rest it just doesnt show it...");
-//        addItemLeft("Hellllllloooo", "hahahahahah");
-//        addItemRight("I'm having issue with the wrapping.... When i get to 80% of the witdthm the rest it just doesnt show it...");
-//        addItemRight("I'm having issue with the wrapping.... When i get to 80% of the witdthm the rest it just doesnt show it...", new ImageIcon(getClass().getResource("/com/app/icon/group.png")));
-//        addItemLeft("Hellllllloooo", "hahahahahah");
-//        addDate("20/05/2025");
-        addItemRight("I'm having issue with the wrapping.... When i get to 80% of the witdthm the rest it just doesnt show it...");
-        addItemRight("I'm having issue with the wrapping.... When i get to 80% of the witdthm the rest it just doesnt show it...", new ImageIcon(getClass().getResource("/com/app/icon/marvel.png")));
-//        addItemLeft("", "tao", new ImageIcon(getClass().getResource("/com/app/icon/group.png")), new ImageIcon(getClass().getResource("/com/app/icon/group.png")));
-        addItemFile("", "hahah", "file cua tao.pdf", "1 MB");
-//        addItemFileRight("", "tao.rar", "2 MB");
-
     }
 
     private void init() {
@@ -50,6 +28,22 @@ public class Chat_Body extends javax.swing.JPanel {
         javax.swing.JPanel spacer = new javax.swing.JPanel();
         spacer.setBackground(new java.awt.Color(255, 255, 255)); // Cùng màu nền với body
         body.add(spacer, "grow, push, wrap");
+    }
+    
+    public void addItemLeft(Model_Receive_Message data) {
+        if (data.getMessageType() == MessageType.TEXT) {
+            Chat_Left item = new Chat_Left();
+            item.setText(data.getText());
+            item.setTime(data.getTime());
+            body.add(item, "wrap, w 100::80%");
+        } else if (data.getMessageType() == MessageType.EMOJI) {
+            Chat_Left item = new Chat_Left();
+            item.setEmoji(Emogi.getInstance().getImoji(Integer.valueOf(data.getText())).getIcon());
+            item.setTime(data.getTime());
+            body.add(item, "wrap, w 100::80%");
+        }
+        repaint();
+        revalidate();
     }
 
     public void addItemLeft(String text, String user, Icon... image) {
@@ -84,6 +78,24 @@ public class Chat_Body extends javax.swing.JPanel {
         body.repaint();
         body.revalidate();
     }
+    
+    public void addItemRight(Model_Send_Message data) {
+        if (data.getMessageType() == MessageType.TEXT) {
+            Chat_Right item = new Chat_Right();
+            item.setText(data.getText());
+            body.add(item, "wrap, al right, w 100::80%");
+            item.setTime(data.getTime());
+        } else if (data.getMessageType() == MessageType.EMOJI) {
+            Chat_Right item = new Chat_Right();
+            item.setEmoji(Emogi.getInstance().getImoji(Integer.valueOf(data.getText())).getIcon());
+            body.add(item, "wrap, al right, w 100::80%");
+            item.setTime(data.getTime());
+        }
+        repaint();
+        revalidate();
+        scrollToBottom();
+    }
+
 
     public void addItemRight(String text, Icon... image) {
         Chat_Right item = new Chat_Right();
@@ -92,7 +104,7 @@ public class Chat_Body extends javax.swing.JPanel {
         body.add(item, "wrap, al right, w 100::80%");
         body.repaint();
         body.revalidate();
-        item.setTime();
+        item.setTime(null);
         scrollToBottom();
     }
 
@@ -112,6 +124,12 @@ public class Chat_Body extends javax.swing.JPanel {
         body.add(item, "wrap, al center");
         body.repaint();
         body.revalidate();
+    }
+    
+    public void clearChat() {
+        body.removeAll();
+        repaint();
+        revalidate();
     }
 
     @SuppressWarnings("unchecked")
