@@ -2,19 +2,30 @@ package com.app.component;
 
 import com.app.emoji.Emogi;
 import com.app.enums.MessageType;
+import com.app.model.History;
 import com.app.model.Model_Receive_Message;
 import com.app.model.Model_Send_Message;
+import com.app.model.UserAccount;
+import com.app.service.Service;
+import io.socket.client.Ack;
 import java.awt.Adjustable;
 import java.awt.Color;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
+import lombok.Getter;
+import lombok.Setter;
 import net.miginfocom.swing.MigLayout;
 
 public class Chat_Body extends javax.swing.JPanel {
+    
+    private UserAccount user;
 
     public Chat_Body() {
         initComponents();
@@ -28,6 +39,33 @@ public class Chat_Body extends javax.swing.JPanel {
         javax.swing.JPanel spacer = new javax.swing.JPanel();
         spacer.setBackground(new java.awt.Color(255, 255, 255)); // Cùng màu nền với body
         body.add(spacer, "grow, push, wrap");
+    }
+    
+    public void setUser(UserAccount user) {
+        clearChat();
+        this.user = user;
+        History history = new History(Service.getInstance().getUserAccount().getUserId(), user.getUserId());
+        System.out.println(user.getUserName());
+        Service.getInstance().getClient().emit("list_message", history.toJsonObject() ,new Ack() {
+            @Override
+            public void call(Object... os) {
+                System.out.println(os.length);
+                for (Object o: os) {
+                    Model_Send_Message message = new Model_Send_Message(o);
+                    if (message.getFromUserID() == Service.getInstance().getUserAccount().getUserId()) {
+                        addItemRight(message);
+                    } else {
+                        addItemLeft(
+                                new Model_Receive_Message(
+                                        message.getMessageType(),
+                                        message.getToUserID(),
+                                        message.getText(),
+                                        message.getTime()
+                                ));
+                    }
+               }
+            }
+        });
     }
     
     public void addItemLeft(Model_Receive_Message data) {

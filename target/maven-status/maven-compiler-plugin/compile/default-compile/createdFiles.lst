@@ -35,6 +35,7 @@ com\app\form\Login$8.class
 com\app\model\Model_Register.class
 com\app\main\Main$2.class
 com\app\component\PanelVerifyMail.class
+com\app\model\History.class
 com\app\component\OptionButton.class
 com\app\component\Panel_More$1.class
 com\app\event\EventMenuLeft.class
@@ -60,6 +61,7 @@ com\app\util\Utils.class
 com\app\swing\JIMSendTextPane.class
 com\app\component\Panel_More$2.class
 com\app\form\Chat.class
+com\app\component\Chat_Body$2.class
 com\app\component\Image_Item.class
 com\app\service\Service$2.class
 com\app\model\Model_Login.class
