@@ -25,6 +25,8 @@ D:\project\App-Chat\src\main\java\com\app\emoji\Emogi.java
 D:\project\App-Chat\src\main\java\com\app\emoji\Model_Emoji.java
 D:\project\App-Chat\src\main\java\com\app\enums\MessageType.java
 D:\project\App-Chat\src\main\java\com\app\event\EventChat.java
+D:\project\App-Chat\src\main\java\com\app\event\EventFileReceiver.java
+D:\project\App-Chat\src\main\java\com\app\event\EventFileSender.java
 D:\project\App-Chat\src\main\java\com\app\event\EventImageView.java
 D:\project\App-Chat\src\main\java\com\app\event\EventLogin.java
 D:\project\App-Chat\src\main\java\com\app\event\EventMain.java
@@ -40,12 +42,15 @@ D:\project\App-Chat\src\main\java\com\app\form\Menu_Right.java
 D:\project\App-Chat\src\main\java\com\app\form\View_Image.java
 D:\project\App-Chat\src\main\java\com\app\main\Main.java
 D:\project\App-Chat\src\main\java\com\app\model\History.java
+D:\project\App-Chat\src\main\java\com\app\model\Model_File_Receiver.java
 D:\project\App-Chat\src\main\java\com\app\model\Model_File_Sender.java
+D:\project\App-Chat\src\main\java\com\app\model\Model_Image.java
 D:\project\App-Chat\src\main\java\com\app\model\Model_Login.java
 D:\project\App-Chat\src\main\java\com\app\model\Model_Message.java
 D:\project\App-Chat\src\main\java\com\app\model\Model_Package_Sender.java
 D:\project\App-Chat\src\main\java\com\app\model\Model_Receive_Message.java
 D:\project\App-Chat\src\main\java\com\app\model\Model_Register.java
+D:\project\App-Chat\src\main\java\com\app\model\Model_Request_File.java
 D:\project\App-Chat\src\main\java\com\app\model\Model_Send_Message.java
 D:\project\App-Chat\src\main\java\com\app\model\UserAccount.java
 D:\project\App-Chat\src\main\java\com\app\service\Service.java

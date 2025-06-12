@@ -1,8 +1,14 @@
 package com.app.component;
 
+import com.app.event.EventFileReceiver;
+import com.app.event.EventFileSender;
 import com.app.model.Model_File_Sender;
+import com.app.model.Model_Image;
+import com.app.service.Service;
 import com.app.swing.blurHash.BlurHash;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
@@ -13,6 +19,22 @@ public class Image_Item extends javax.swing.JLayeredPane {
     }
     
     public void setImage(Icon image, Model_File_Sender fileSender) {
+        fileSender.setEvent(new EventFileSender() {
+            @Override
+            public void onSending(double percentage) {
+                progress.setValue((int) percentage);
+            }
+
+            @Override
+            public void onStartSending() {
+            }
+
+            @Override
+            public void onFinish() {
+                progress.setVisible(false);
+            }
+
+        });
         pic.setImage(image);
     }
     
@@ -25,24 +47,55 @@ public class Image_Item extends javax.swing.JLayeredPane {
         Icon icon = new ImageIcon(img);
         pic.setImage(icon);
     }
+    
+    public void setImage(Model_Image dataImage) {
+        int width = dataImage.getWidth();
+        int height = dataImage.getHeight();
+        int[] data = BlurHash.decode(dataImage.getImage(), width, height, 1);
+        BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+        img.setRGB(0, 0, width, height, data, 0, width);
+        Icon icon = new ImageIcon(img);
+        pic.setImage(icon);
+        try {
+            Service.getInstance().addFileReceiver(dataImage.getFileID(), new EventFileReceiver() {
+                @Override
+                public void onReceiving(double percentage) {
+                    progress.setValue((int) percentage);
+                }
+
+                @Override
+                public void onStartReceiving() {
+
+                }
+
+                @Override
+                public void onFinish(File file) {
+                    progress.setVisible(false);
+                    pic.setImage(new ImageIcon(file.getAbsolutePath()));
+                }
+            });
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
         pic = new com.app.swing.PictureBox();
-        progress1 = new com.app.swing.Progress();
+        progress = new com.app.swing.Progress();
 
         setBackground(new java.awt.Color(255, 255, 255));
 
         pic.setBackground(new java.awt.Color(255, 255, 255));
 
-        progress1.setBackground(new java.awt.Color(242, 242, 242));
-        progress1.setForeground(new java.awt.Color(102, 102, 102));
-        progress1.setToolTipText("");
-        progress1.setProgressType(com.app.swing.Progress.ProgressType.CANCEL);
+        progress.setBackground(new java.awt.Color(242, 242, 242));
+        progress.setForeground(new java.awt.Color(102, 102, 102));
+        progress.setToolTipText("");
+        progress.setProgressType(com.app.swing.Progress.ProgressType.CANCEL);
 
-        pic.setLayer(progress1, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        pic.setLayer(progress, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         javax.swing.GroupLayout picLayout = new javax.swing.GroupLayout(pic);
         pic.setLayout(picLayout);
@@ -50,14 +103,14 @@ public class Image_Item extends javax.swing.JLayeredPane {
             picLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(picLayout.createSequentialGroup()
                 .addContainerGap(20, Short.MAX_VALUE)
-                .addComponent(progress1, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(progress, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(20, Short.MAX_VALUE))
         );
         picLayout.setVerticalGroup(
             picLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(picLayout.createSequentialGroup()
                 .addContainerGap(20, Short.MAX_VALUE)
-                .addComponent(progress1, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(progress, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(20, Short.MAX_VALUE))
         );
 
@@ -78,6 +131,6 @@ public class Image_Item extends javax.swing.JLayeredPane {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private com.app.swing.PictureBox pic;
-    private com.app.swing.Progress progress1;
+    private com.app.swing.Progress progress;
     // End of variables declaration//GEN-END:variables
 }

@@ -17,20 +17,35 @@ import org.json.JSONObject;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Model_Package_Sender {
-    private long fileID;
-    private byte[] data;
-    private boolean finish;
-
+public class Model_Image {
+    private int fileID;
+    private String image;
+    private int width;
+    private int height;
+    
+    public Model_Image(Object json) {
+        JSONObject obj = (JSONObject) json;
+        try {
+            fileID = obj.getInt("fileID");
+            image = obj.getString("image");
+            width = obj.getInt("width");
+            height = obj.getInt("height");
+        } catch (JSONException e) {
+            System.err.println(e);
+        }
+    }
+    
     public JSONObject toJsonObject() {
         try {
             JSONObject json = new JSONObject();
             json.put("fileID", fileID);
-            json.put("data", data);
-            json.put("finish", finish);
+            json.put("image", image);
+            json.put("width", width);
+            json.put("height", height);
             return json;
         } catch (JSONException e) {
             return null;
         }
     }
+    
 }

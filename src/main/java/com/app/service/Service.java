@@ -1,6 +1,8 @@
 package com.app.service;
 
+import com.app.event.EventFileReceiver;
 import com.app.event.PublicEvent;
+import com.app.model.Model_File_Receiver;
 import com.app.model.Model_File_Sender;
 import com.app.model.Model_Receive_Message;
 import com.app.model.Model_Send_Message;
@@ -15,29 +17,33 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
+import org.json.JSONObject;
 
 public class Service {
+
     private static Service instance;
     @Getter
     private Socket client;
     private final int PORT_NUMBER = 9999;
     private final String IP = "26.73.222.249";
+
     public static Service getInstance() {
         if (instance == null) {
             instance = new Service();
         }
         return instance;
     }
-    
+
     @Getter
     @Setter
     private UserAccount userAccount;
     private List<Model_File_Sender> fileSender;
-    
+    private List<Model_File_Receiver> fileReceiver;
+
     public Service() {
         fileSender = new ArrayList<>();
+        fileReceiver = new ArrayList<>();
     }
-    
 
     public void startServer() {
         try {
@@ -46,7 +52,7 @@ public class Service {
                 @Override
                 public void call(Object... os) {
                     List<UserAccount> users = new ArrayList<>();
-                    for (Object o: os) {
+                    for (Object o : os) {
                         UserAccount user = new UserAccount(o);
                         if (user.getUserId() != userAccount.getUserId()) {
                             users.add(user);
@@ -59,18 +65,19 @@ public class Service {
                 @Override
                 public void call(Object... os) {
                     Long userId = Long.valueOf(os[0].toString());
-                    boolean status = (boolean)os[1];
+                    boolean status = (boolean) os[1];
                     if (status) {
                         PublicEvent.getInstance().getEventMenuLeft().userConnect(userId);
                     } else {
                         PublicEvent.getInstance().getEventMenuLeft().userDisconnect(userId);
                     }
-                    
+
                 }
             });
             client.on("receive_ms", new Emitter.Listener() {
                 @Override
                 public void call(Object... os) {
+                        System.out.println(((JSONObject) os[0]).toString());
                     Model_Receive_Message message = new Model_Receive_Message(os[0]);
                     PublicEvent.getInstance().getEventChat().reiceveMessage(message);
                 }
@@ -80,7 +87,7 @@ public class Service {
             System.getLogger(Service.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
         }
     }
-    
+
     public Model_File_Sender addFile(File file, Model_Send_Message message) throws IOException {
         Model_File_Sender data = new Model_File_Sender(file, client, message);
         message.setFile(data);
@@ -90,13 +97,27 @@ public class Service {
         }
         return data;
     }
+    
+    public void addFileReceiver(int fileID, EventFileReceiver event) throws IOException {
+        Model_File_Receiver data = new Model_File_Receiver(fileID, client, event);
+        fileReceiver.add(data);
+        if (fileReceiver.size() == 1) {
+            data.initReceive();
+        }
+    }
 
     public void fileSendFinish(Model_File_Sender data) throws IOException {
         fileSender.remove(data);
         if (!fileSender.isEmpty()) {
-            //  Start send new file when old file sending finish
             fileSender.get(0).initSend();
         }
     }
     
+    public void fileReceiveFinish(Model_File_Receiver data) throws IOException {
+        fileReceiver.remove(data);
+        if (!fileReceiver.isEmpty()) {
+            fileReceiver.get(0).initReceive();
+        }
+    }
+
 }

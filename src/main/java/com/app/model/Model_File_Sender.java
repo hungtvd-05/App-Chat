@@ -4,6 +4,7 @@
  */
 package com.app.model;
 
+import com.app.event.EventFileSender;
 import com.app.service.Service;
 import io.socket.client.Ack;
 import io.socket.client.Socket;
@@ -18,21 +19,20 @@ import lombok.NoArgsConstructor;
  *
  * @author LENOVO
  */
-
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class Model_File_Sender {
-    
+
     private Model_Send_Message message;
-    private int fileID;
+    private long fileID;
     private String fileExtensions;
     private File file;
     private long fileSize;
     private RandomAccessFile accFile;
     private Socket socket;
-    
+    private EventFileSender event;
+
     public Model_File_Sender(File file, Socket socket, Model_Send_Message message) throws IOException {
         accFile = new RandomAccessFile(file, "r");
         this.file = file;
@@ -62,6 +62,7 @@ public class Model_File_Sender {
             public void call(Object... os) {
                 if (os.length > 0) {
                     int fileID = (int) os[0];
+                    System.out.println("ID ảnh " + fileID);
                     try {
                         startSend(fileID);
                     } catch (IOException e) {
@@ -73,6 +74,9 @@ public class Model_File_Sender {
     }
 
     public void startSend(int fileID) throws IOException {
+        if (event != null) {
+            event.onStartSending();
+        }
         this.fileID = fileID;
         sendingFile();
     }
@@ -96,10 +100,16 @@ public class Model_File_Sender {
                     if (act) {
                         try {
                             if (!data.isFinish()) {
+                                if (event != null) {
+                                    event.onSending(getPercentage());
+                                }
                                 sendingFile();
                             } else {
                                 //  File send finish
                                 Service.getInstance().fileSendFinish(Model_File_Sender.this);
+                                if (event != null) {
+                                    event.onFinish();
+                                }
                             }
                         } catch (IOException e) {
                             e.printStackTrace();
@@ -124,5 +134,5 @@ public class Model_File_Sender {
     private String getExtensions(String fileName) {
         return fileName.substring(fileName.lastIndexOf("."), fileName.length());
     }
-    
+
 }

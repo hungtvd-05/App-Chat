@@ -22,6 +22,7 @@ import javax.swing.JScrollPane;
 import lombok.Getter;
 import lombok.Setter;
 import net.miginfocom.swing.MigLayout;
+import org.json.JSONObject;
 
 public class Chat_Body extends javax.swing.JPanel {
     
@@ -49,19 +50,23 @@ public class Chat_Body extends javax.swing.JPanel {
         Service.getInstance().getClient().emit("list_message", history.toJsonObject() ,new Ack() {
             @Override
             public void call(Object... os) {
-                System.out.println(os.length);
                 for (Object o: os) {
+                    System.out.println(((JSONObject) o).toString());
                     Model_Send_Message message = new Model_Send_Message(o);
-                    if (message.getFromUserID() == Service.getInstance().getUserAccount().getUserId()) {
-                        addItemRight(message);
-                    } else {
-                        addItemLeft(
-                                new Model_Receive_Message(
-                                        message.getMessageType(),
-                                        message.getToUserID(),
-                                        message.getText(),
-                                        message.getTime()
-                                ));
+                    try {
+                        if (message.getFromUserID() == Service.getInstance().getUserAccount().getUserId()) {
+                            addItemRight(message);
+                        } else {
+                            addItemLeft(
+                                    new Model_Receive_Message(
+                                            message.getMessageType(),
+                                            message.getToUserID(),
+                                            message.getContent(),
+                                            message.getTime()
+                                    ));
+                        }
+                    } catch (Exception e) {
+                        
                     }
                }
             }
@@ -83,8 +88,8 @@ public class Chat_Body extends javax.swing.JPanel {
             Chat_Left item = new Chat_Left();
             item.setText("");
             item.setTime(data.getTime());
-            item.setImage(data.getFile());
-            body.add(item, "wrap, al right, w 100::80%");
+            item.setImage(data.getDataImage());
+            body.add(item, "wrap, w 100::80%");
         }
         repaint();
         revalidate();
@@ -126,12 +131,12 @@ public class Chat_Body extends javax.swing.JPanel {
     public void addItemRight(Model_Send_Message data) {
         if (data.getMessageType() == MessageType.TEXT) {
             Chat_Right item = new Chat_Right();
-            item.setText(data.getText());
+            item.setText(data.getContent());
             item.setTime(data.getTime());
             body.add(item, "wrap, al right, w 100::80%");
         } else if (data.getMessageType() == MessageType.EMOJI) {
             Chat_Right item = new Chat_Right();
-            item.setEmoji(Emogi.getInstance().getImoji(Integer.valueOf(data.getText())).getIcon());
+            item.setEmoji(Emogi.getInstance().getImoji(Integer.valueOf(data.getContent())).getIcon());
             item.setTime(data.getTime());
             body.add(item, "wrap, al right, w 100::80%");
         } else if (data.getMessageType() == MessageType.IMAGE) {

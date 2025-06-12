@@ -17,20 +17,19 @@ import org.json.JSONObject;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Model_Package_Sender {
+public class Model_Request_File {
     private long fileID;
-    private byte[] data;
-    private boolean finish;
-
+    private long currentLength;
+    
     public JSONObject toJsonObject() {
         try {
             JSONObject json = new JSONObject();
             json.put("fileID", fileID);
-            json.put("data", data);
-            json.put("finish", finish);
+            json.put("currentLength", currentLength);
             return json;
         } catch (JSONException e) {
             return null;
         }
     }
+    
 }

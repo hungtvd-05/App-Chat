@@ -1,14 +1,17 @@
 com\app\model\Model_Package_Sender.class
 com\app\component\MenuButton.class
 com\app\emoji\Model_Emoji.class
+com\app\model\Model_Image.class
 com\app\component\Chat_Bottom$2.class
 com\app\swing\JIMSendTextPane$WarpEditorKit.class
 com\app\swing\Progress.class
 com\app\component\PanelVerifyMail$1.class
+com\app\event\EventFileReceiver.class
 com\app\form\Login$4.class
 com\app\component\PanelCover$2.class
 com\app\form\Menu_Left$2.class
 com\app\component\PanelLoginAndRegister$1.class
+com\app\event\EventFileSender.class
 com\app\main\Main.class
 com\app\component\Chat_Bottom.class
 com\app\event\PublicEvent.class
@@ -32,6 +35,7 @@ com\app\swing\blurHash\Base83.class
 com\app\swing\ImageAvatar.class
 com\app\model\Model_Receive_Message.class
 com\app\component\Item_People$1.class
+com\app\component\Image_Item$2.class
 com\app\component\Panel_More$3.class
 com\app\form\Login$8.class
 com\app\model\Model_Register.class
@@ -41,9 +45,12 @@ com\app\model\History.class
 com\app\component\OptionButton.class
 com\app\component\Panel_More$1.class
 com\app\event\EventMenuLeft.class
+com\app\model\Model_Request_File.class
 com\app\component\CustomPasswordField$2.class
+com\app\component\Image_Item$1.class
 com\app\swing\ProgressCircleUI.class
 com\app\swing\ActiveStatus.class
+com\app\model\Model_File_Receiver$2.class
 com\app\component\Chat_Right.class
 com\app\enums\MessageType.class
 com\app\form\Chat$1.class
@@ -54,6 +61,7 @@ com\app\form\Login$9.class
 com\app\util\UppercaseDocumentFilter.class
 com\app\component\Chat_Image.class
 com\app\service\Service$3.class
+com\app\model\Model_File_Receiver$1.class
 com\app\component\PanelCover.class
 com\app\form\Login$1$1.class
 com\app\component\CustomButton$1.class
@@ -122,5 +130,6 @@ com\app\swing\JIMSendTextPane$WarpColumnFactory.class
 com\app\component\PanelLoginAndRegister.class
 com\app\event\EventMessage.class
 com\app\swing\ScrollBar.class
+com\app\model\Model_File_Receiver.class
 com\app\form\Login$3.class
 com\app\component\CustomPasswordField.class
