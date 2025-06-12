@@ -25,7 +25,7 @@ public class Service {
     @Getter
     private Socket client;
     private final int PORT_NUMBER = 9999;
-    private final String IP = "26.73.222.249";
+    private final String IP = "localhost";
 
     public static Service getInstance() {
         if (instance == null) {

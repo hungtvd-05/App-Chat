@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.app.model;
 
 import com.app.event.EventFileSender;
@@ -11,14 +7,11 @@ import io.socket.client.Socket;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.util.Base64;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/**
- *
- * @author LENOVO
- */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -43,26 +36,23 @@ public class Model_File_Sender {
     }
 
     public synchronized byte[] readFile() throws IOException {
-        long filepointer = accFile.getFilePointer();
-        if (filepointer != fileSize) {
-            int max = 2000;
-            long length = filepointer + max >= fileSize ? fileSize - filepointer : max;
+        long filePointer = accFile.getFilePointer();
+        if (filePointer < fileSize) {
+            int max = 1024 * 1024 * 5;
+            long length = Math.min(max, fileSize - filePointer);
             byte[] data = new byte[(int) length];
             accFile.read(data);
             return data;
-        } else {
-            return null;
         }
+        return null;
     }
 
     public void initSend() throws IOException {
-        System.out.println("Init file to server and wait server response back");
         socket.emit("send_to_user", message.toJSONObject(), new Ack() {
             @Override
             public void call(Object... os) {
                 if (os.length > 0) {
                     int fileID = (int) os[0];
-                    System.out.println("ID ảnh " + fileID);
                     try {
                         startSend(fileID);
                     } catch (IOException e) {
@@ -72,12 +62,13 @@ public class Model_File_Sender {
             }
         });
     }
+    
 
     public void startSend(int fileID) throws IOException {
+        this.fileID = fileID;
         if (event != null) {
             event.onStartSending();
         }
-        this.fileID = fileID;
         sendingFile();
     }
 
@@ -119,6 +110,7 @@ public class Model_File_Sender {
             }
         });
     }
+
 
     public double getPercentage() throws IOException {
         double percentage;
