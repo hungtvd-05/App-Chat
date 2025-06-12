@@ -9,35 +9,42 @@ import com.app.swing.blurHash.BlurHash;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.SwingUtilities;
 
 public class Image_Item extends javax.swing.JLayeredPane {
 
     public Image_Item() {
         initComponents();
     }
-    
+
     public void setImage(Icon image, Model_File_Sender fileSender) {
-        fileSender.setEvent(new EventFileSender() {
+        System.out.println("ahahhahaha");
+        fileSender.addEvent(new EventFileSender() {
             @Override
             public void onSending(double percentage) {
+                System.out.println("dang goi");
                 progress.setValue((int) percentage);
             }
 
             @Override
             public void onStartSending() {
+                System.out.println("dang goi");
             }
 
             @Override
             public void onFinish() {
                 progress.setVisible(false);
+                System.out.println("da dua anh len server thanh cong");
             }
 
         });
         pic.setImage(image);
     }
-    
+
     public void setImage(String image) {
         int width = 200;
         int height = 200;
@@ -47,7 +54,7 @@ public class Image_Item extends javax.swing.JLayeredPane {
         Icon icon = new ImageIcon(img);
         pic.setImage(icon);
     }
-    
+
     public void setImage(Model_Image dataImage) {
         int width = dataImage.getWidth();
         int height = dataImage.getHeight();
@@ -60,6 +67,7 @@ public class Image_Item extends javax.swing.JLayeredPane {
             Service.getInstance().addFileReceiver(dataImage.getFileID(), new EventFileReceiver() {
                 @Override
                 public void onReceiving(double percentage) {
+                    System.out.println("dang goi 1");
                     progress.setValue((int) percentage);
                 }
 
@@ -70,8 +78,12 @@ public class Image_Item extends javax.swing.JLayeredPane {
 
                 @Override
                 public void onFinish(File file) {
-                    progress.setVisible(false);
-                    pic.setImage(new ImageIcon(file.getAbsolutePath()));
+                    SwingUtilities.invokeLater(() -> {
+                        progress.setVisible(false);
+                        pic.setImage(new ImageIcon(file.getAbsolutePath()));
+                        pic.repaint();
+                        pic.getParent().revalidate();
+                    });
                 }
             });
         } catch (IOException e) {

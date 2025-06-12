@@ -3,7 +3,6 @@ package com.app.component;
 import com.app.event.PublicEvent;
 import com.app.model.Model_File_Sender;
 import com.app.model.Model_Image;
-import com.app.swing.PictureBox;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
