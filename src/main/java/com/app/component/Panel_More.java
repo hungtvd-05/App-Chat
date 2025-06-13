@@ -121,7 +121,18 @@ public class Panel_More extends javax.swing.JPanel {
             @Override
             public void actionPerformed(ActionEvent ae) {
                 JFileChooser ch = new JFileChooser();
-                ch.showOpenDialog(Main.getFrames()[0]);
+                ch.setFileFilter(new FileFilter() {
+                    @Override
+                    public boolean accept(File file) {
+                        return file.isDirectory() || Utils.isImageFile(file);
+                    }
+
+                    @Override
+                    public String getDescription() {
+                        return "Image File";
+                    }
+                });
+                int option = ch.showOpenDialog(Main.getFrames()[0]);
                 //  Update next
             }
         });

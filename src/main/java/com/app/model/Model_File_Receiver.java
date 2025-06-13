@@ -20,7 +20,7 @@ import java.util.Base64;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Model_File_Receiver {
-    private int fileID;
+    private long fileID;
     private File file;
     private long fileSize;
     private String fileExtention;
@@ -29,7 +29,7 @@ public class Model_File_Receiver {
     private EventFileReceiver event;
     private final String PATH_FILE = "client_data/";
 
-    public Model_File_Receiver(int fileID, Socket socket, EventFileReceiver event) {
+    public Model_File_Receiver(long fileID, Socket socket, EventFileReceiver event) {
         this.fileID = fileID;
         this.socket = socket;
         this.event = event;

@@ -7,6 +7,8 @@ import io.socket.client.Socket;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -94,6 +96,12 @@ public class Model_File_Sender {
                 if (args.length > 0) {
                     fileID = (int) args[0];
                     try {
+                        File dir = new File("client_data");
+                        if (!dir.exists()) {
+                            dir.mkdirs();
+                        }
+                        File destFile = new File("client_data/" + fileID + fileExtensions);
+                        Files.copy(file.toPath(), destFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
                         startSend();
                     } catch (IOException e) {
                         handleError("Error starting send: " + e.getMessage());

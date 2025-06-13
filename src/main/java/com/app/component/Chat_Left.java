@@ -26,6 +26,10 @@ public class Chat_Left extends javax.swing.JLayeredPane {
         txt.setImage(false, fileSender);
     }
     
+    public void setImage(String path) {
+        txt.setImage(false, path);
+    }
+    
     public void setImage(Model_Image dataImage) {
         txt.setImage(false, dataImage);
     }

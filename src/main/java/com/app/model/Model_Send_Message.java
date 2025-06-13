@@ -12,6 +12,7 @@ import org.json.JSONObject;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Model_Send_Message {
+    private long id;
     private MessageType messageType;
     private long fromUserID;
     private long toUserID;
@@ -36,6 +37,7 @@ public class Model_Send_Message {
     public Model_Send_Message(Object json) {
         JSONObject obj = (JSONObject) json;
         try {
+            id = obj.getLong("id");
             messageType = MessageType.toMessageType(obj.getInt("messageType"));
             fromUserID = obj.getLong("fromUserID");
             toUserID = obj.getLong("toUserID");
@@ -54,6 +56,7 @@ public class Model_Send_Message {
     public JSONObject toJSONObject() {
         try {
             JSONObject json = new JSONObject();
+            json.put("id", id);
             json.put("messageType", messageType.getValue());
             json.put("fromUserID", fromUserID);
             json.put("toUserID", toUserID);

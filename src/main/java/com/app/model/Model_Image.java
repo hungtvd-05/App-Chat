@@ -18,7 +18,7 @@ import org.json.JSONObject;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Model_Image {
-    private int fileID;
+    private long fileID;
     private String image;
     private int width;
     private int height;

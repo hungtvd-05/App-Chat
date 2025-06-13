@@ -14,6 +14,8 @@ import java.util.Locale;
  * @author LENOVO
  */
 public class Utils {
+    
+    
     public static String formatTime(LocalDateTime time) {
         try {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm", Locale.ENGLISH);
@@ -31,5 +33,10 @@ public class Utils {
     public static boolean isImageFile(File file) {
         String name = file.getName().toLowerCase();
         return name.endsWith(".jpg") || name.endsWith(".png") || name.endsWith(".jpeg") || name.endsWith(".gif");
+    }
+    
+    public static boolean isImageFileExists(String relativePath) {
+        File imageFile = new File(relativePath);
+        return imageFile.exists() && imageFile.isFile();
     }
 }

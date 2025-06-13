@@ -45,17 +45,29 @@ public class Image_Item extends javax.swing.JLayeredPane {
         pic.setImage(image);
     }
 
-    public void setImage(String image) {
-        int width = 200;
-        int height = 200;
-        int[] data = BlurHash.decode(image, width, height, 1);
-        BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-        img.setRGB(0, 0, width, height, data, 0, width);
-        Icon icon = new ImageIcon(img);
-        pic.setImage(icon);
+//    public void setImage(String image) {
+//        int width = 200;
+//        int height = 200;
+//        int[] data = BlurHash.decode(image, width, height, 1);
+//        BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+//        img.setRGB(0, 0, width, height, data, 0, width);
+//        Icon icon = new ImageIcon(img);
+//        pic.setImage(icon);
+//    }
+    
+    public void setImage(Icon image) {
+        pic.setImage(image);
+        progress.setVisible(false);
+    }
+    
+    public void setImage(String path) {
+        progress.setVisible(false);
+        pic.setImage(new ImageIcon(path));
+        pic.repaint();
+        pic.getParent().revalidate();
     }
 
-    public void setImage(Model_Image dataImage) {
+    public void setImage(Model_Image dataImage, Chat_Image chat_Image) {
         int width = dataImage.getWidth();
         int height = dataImage.getHeight();
         int[] data = BlurHash.decode(dataImage.getImage(), width, height, 1);
@@ -80,7 +92,9 @@ public class Image_Item extends javax.swing.JLayeredPane {
                 public void onFinish(File file) {
                     SwingUtilities.invokeLater(() -> {
                         progress.setVisible(false);
-                        pic.setImage(new ImageIcon(file.getAbsolutePath()));
+                        Icon image = new ImageIcon(file.getAbsolutePath());
+                        pic.setImage(image);
+                        chat_Image.addEvent(pic, image);
                         pic.repaint();
                         pic.getParent().revalidate();
                     });

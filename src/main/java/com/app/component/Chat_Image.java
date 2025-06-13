@@ -33,22 +33,21 @@ public class Chat_Image extends javax.swing.JPanel {
     public void addImage(Model_Image dataImage) {
         Image_Item pic = new Image_Item();
         pic.setPreferredSize(new Dimension(dataImage.getWidth(), dataImage.getHeight()));
-        pic.setImage(dataImage);
+        pic.setImage(dataImage, this);
         //  addEvent(pic, image);
         add(pic, "wrap");
     }
     
-    public void addImage(String... images) {
-        for (String image : images) {
+    public void addImage(String path) {
+            Icon image = new ImageIcon(path);
             Image_Item pic = new Image_Item();
-            pic.setPreferredSize(new Dimension(200, 200));
+            pic.setPreferredSize(getAutoSize(image, 200, 200));
             pic.setImage(image);
-//            addEvent(pic, image);
+            addEvent(pic, image);
             add(pic, "wrap");
-        }
     }
     
-    private void addEvent(Component com, Icon image) {
+    public void addEvent(Component com, Icon image) {
         com.setCursor(new Cursor(Cursor.HAND_CURSOR));
         com.addMouseListener(new MouseAdapter() {
             @Override

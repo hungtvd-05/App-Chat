@@ -3,15 +3,18 @@ package com.app.component;
 import com.app.emoji.Emogi;
 import com.app.enums.MessageType;
 import com.app.model.History;
+import com.app.model.Model_Image;
 import com.app.model.Model_Receive_Message;
 import com.app.model.Model_Send_Message;
 import com.app.model.UserAccount;
 import com.app.service.Service;
+import com.app.util.Utils;
 import io.socket.client.Ack;
 import java.awt.Adjustable;
 import java.awt.Color;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
+import java.io.File;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -53,21 +56,26 @@ public class Chat_Body extends javax.swing.JPanel {
                 for (Object o: os) {
                     System.out.println(((JSONObject) o).toString());
                     Model_Send_Message message = new Model_Send_Message(o);
-                    try {
                         if (message.getFromUserID() == Service.getInstance().getUserAccount().getUserId()) {
                             addItemRight(message);
                         } else {
-                            addItemLeft(
-                                    new Model_Receive_Message(
+                            Model_Receive_Message receive_Message = new Model_Receive_Message(
                                             message.getMessageType(),
                                             message.getToUserID(),
                                             message.getContent(),
                                             message.getTime()
-                                    ));
+                                    ); 
+                            
+                            receive_Message.setDataImage(
+                                    new Model_Image(
+                                            message.getId(),
+                                            message.getBlurHash(),
+                                            message.getWidth_blur(),
+                                            message.getHeight_blur()));
+                            
+                            addItemLeft(receive_Message, message.getFileExtension());
                         }
-                    } catch (Exception e) {
-                        
-                    }
+
                }
             }
         });
@@ -91,9 +99,46 @@ public class Chat_Body extends javax.swing.JPanel {
             item.setImage(data.getDataImage());
             body.add(item, "wrap, w 100::80%");
         }
+        scrollToBottom();
         repaint();
         revalidate();
     }
+    
+    public void addItemLeft(Model_Receive_Message data, String fileExtension) {
+        if (data.getMessageType() == MessageType.TEXT) {
+            Chat_Left item = new Chat_Left();
+            item.setText(data.getText());
+            item.setTime(data.getTime());
+            body.add(item, "wrap, w 100::80%");
+        } else if (data.getMessageType() == MessageType.EMOJI) {
+            Chat_Left item = new Chat_Left();
+            item.setEmoji(Emogi.getInstance().getImoji(Integer.valueOf(data.getText())).getIcon());
+            item.setTime(data.getTime());
+            body.add(item, "wrap, w 100::80%");
+        } else if (data.getMessageType() == MessageType.IMAGE) {
+            Chat_Left item = new Chat_Left();
+            item.setText("");
+            
+            
+            
+            
+            String relativePath = "client_data/" + data.getDataImage().getFileID() + fileExtension;
+            if (Utils.isImageFileExists(relativePath)) {
+                item.setImage(relativePath);
+            } else {
+                item.setImage(data.getDataImage());
+            }
+            
+            item.setTime(data.getTime());
+            body.add(item, "wrap, w 100::80%");
+        }
+        scrollToBottom();
+        repaint();
+        revalidate();
+    }
+    
+
+    
 
     public void addItemLeft(String text, String user, Icon... image) {
         Chat_Left_With_Profile item = new Chat_Left_With_Profile();
@@ -109,7 +154,7 @@ public class Chat_Body extends javax.swing.JPanel {
     public void addItemLeft(String text, String user, String[] image) {
         Chat_Left_With_Profile item = new Chat_Left_With_Profile();
         item.setText(text);
-        item.setImage(image);
+//        item.setImage(image);
         item.setTime();
         item.setUserProfile(user);
         body.add(item, "wrap, w 100::80%");
@@ -142,7 +187,14 @@ public class Chat_Body extends javax.swing.JPanel {
         } else if (data.getMessageType() == MessageType.IMAGE) {
             Chat_Right item = new Chat_Right();
             item.setText("");
-            item.setImage(data.getFile());
+            String relativePath = "client_data/" + data.getId() + data.getFileExtension();
+            if (Utils.isImageFileExists(relativePath)) {
+                item.setImage(relativePath);
+            } else if (data.getFile() != null) {
+                item.setImage(data.getFile());
+            } else if (data.getBlurHash().length() > 0) {
+                item.setImage(new Model_Image(data.getId(), data.getBlurHash(), data.getWidth_blur(), data.getHeight_blur()));
+            }
             item.setTime(data.getTime());
             body.add(item, "wrap, al right, w 100::80%");
 

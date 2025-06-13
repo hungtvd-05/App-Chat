@@ -98,7 +98,7 @@ public class Service {
         return data;
     }
     
-    public void addFileReceiver(int fileID, EventFileReceiver event) throws IOException {
+    public void addFileReceiver(long fileID, EventFileReceiver event) throws IOException {
         Model_File_Receiver data = new Model_File_Receiver(fileID, client, event);
         fileReceiver.add(data);
         if (fileReceiver.size() == 1) {
