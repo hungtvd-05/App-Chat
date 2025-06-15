@@ -5,8 +5,10 @@ import com.app.event.PublicEvent;
 import com.app.model.Model_File_Receiver;
 import com.app.model.Model_File_Sender;
 import com.app.model.Model_Receive_Message;
+import com.app.model.Model_Save_Message;
 import com.app.model.Model_Send_Message;
 import com.app.model.UserAccount;
+import com.app.security.ChatManager;
 import io.socket.client.IO;
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
@@ -67,7 +69,9 @@ public class Service {
                     Long userId = Long.valueOf(os[0].toString());
                     boolean status = (boolean) os[1];
                     if (status) {
-                        PublicEvent.getInstance().getEventMenuLeft().userConnect(userId);
+                        System.out.println(os[2].toString());
+                        System.out.println(os[3].toString());
+                        PublicEvent.getInstance().getEventMenuLeft().userConnect(userId, os[2].toString(), os[3].toString());
                     } else {
                         PublicEvent.getInstance().getEventMenuLeft().userDisconnect(userId);
                     }
@@ -77,11 +81,17 @@ public class Service {
             client.on("receive_ms", new Emitter.Listener() {
                 @Override
                 public void call(Object... os) {
-                        System.out.println(((JSONObject) os[0]).toString());
                     Model_Receive_Message message = new Model_Receive_Message(os[0]);
+                    
+                    try {
+                        message.setText(ChatManager.getInstance().receiveMessage(message));
+                    } catch (Exception ex) {
+                        message.setText("");
+                    }
                     PublicEvent.getInstance().getEventChat().reiceveMessage(message);
                 }
             });
+            
             client.open();
         } catch (URISyntaxException ex) {
             System.getLogger(Service.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
@@ -97,7 +107,7 @@ public class Service {
         }
         return data;
     }
-    
+
     public void addFileReceiver(long fileID, EventFileReceiver event) throws IOException {
         Model_File_Receiver data = new Model_File_Receiver(fileID, client, event);
         fileReceiver.add(data);
@@ -112,7 +122,7 @@ public class Service {
             fileSender.get(0).initSend();
         }
     }
-    
+
     public void fileReceiveFinish(Model_File_Receiver data) throws IOException {
         fileReceiver.remove(data);
         if (!fileReceiver.isEmpty()) {

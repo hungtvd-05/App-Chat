@@ -1,9 +1,11 @@
 package com.app.model;
 
 import com.app.event.EventFileSender;
+import com.app.security.ChatManager;
 import com.app.service.Service;
 import io.socket.client.Ack;
 import io.socket.client.Socket;
+import io.socket.emitter.Emitter;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -12,6 +14,7 @@ import java.nio.file.StandardCopyOption;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.json.JSONObject;
 
 @Data
 @AllArgsConstructor
@@ -85,11 +88,12 @@ public class Model_File_Sender {
             handleError("Error starting send: " + e.getMessage());
         }
     }
-    
+
     private void startSendInternal() throws IOException {
         System.out.println("startSendInternal: Starting with fileSize=" + fileSize);
         isSending = true;
         sentBytes = 0;
+//        message = ChatManager.getInstance().sendMessage(message, user);
         socket.emit("send_to_user", message.toJSONObject(), new Ack() {
             @Override
             public void call(Object... args) {
@@ -132,8 +136,7 @@ public class Model_File_Sender {
                 data.setFinish(false);
             } else {
                 data.setFinish(true);
-            }        
-            
+            }
 
             // Cập nhật giao diện trước khi gửi
             if (event != null && !data.isFinish()) {
@@ -158,6 +161,7 @@ public class Model_File_Sender {
                                     if (event != null) {
                                         event.onFinish();
                                     }
+
                                 }
                             } catch (IOException e) {
                                 handleError("Error processing chunk: " + e.getMessage());
@@ -168,6 +172,28 @@ public class Model_File_Sender {
                         } else {
                             handleError("Max retries reached for chunk at offset " + data.getOffset());
                         }
+                    }
+                }
+            });
+            socket.on("file_completed", new Emitter.Listener() {
+                @Override
+                public void call(Object... os) {
+                    if (os.length > 0) {
+                        Model_Send_Message msm = new Model_Send_Message(os[0]);
+                        System.out.println(msm);
+                        ChatManager.getInstance().saveMessage(
+                                new Model_Save_Message(
+                                        msm.getId(),
+                                        msm.getMessageType().getValue(),
+                                        msm.getFromUserID(),
+                                        msm.getToUserID(),
+                                        msm.getFileExtension(),
+                                        msm.getBlurHash(),
+                                        msm.getHeight_blur(),
+                                        msm.getWidth_blur(),
+                                        msm.getTime()
+                                )
+                        );
                     }
                 }
             });
@@ -200,7 +226,7 @@ public class Model_File_Sender {
     private String getExtensions(String fileName) {
         return fileName.substring(fileName.lastIndexOf("."), fileName.length());
     }
-    
+
     public void addEvent(EventFileSender event) {
         this.event = event;
     }

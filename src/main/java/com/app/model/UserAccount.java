@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.app.model;
 
 import lombok.AllArgsConstructor;
@@ -26,6 +22,8 @@ public class UserAccount {
     private String gender;
     private boolean status;
     private String image;
+    private String pubkeyDSA; 
+    private String pubkeyRSA;
     
     
     public UserAccount(Object json) {
@@ -40,6 +38,8 @@ public class UserAccount {
             this.gender = obj.getString("gender");
             this.status = obj.getBoolean("status");
             this.image = obj.getString("image");
+            this.pubkeyDSA = obj.getString("pubkeyDSA");
+            this.pubkeyRSA = obj.getString("pubkeyRSA");
         } catch (Exception e) {
             System.err.println(e);
         }

@@ -40,10 +40,12 @@ public class Menu_Left extends javax.swing.JPanel {
             }
 
             @Override
-            public void userConnect(Long userId) {
+            public void userConnect(Long userId, String pubkeyDSA, String pubkeyRSA) {
                 for (UserAccount u : userAccountList) {
                     if (u.getUserId() == userId) {
                         u.setStatus(true);
+                        u.setPubkeyDSA(pubkeyDSA);
+                        u.setPubkeyRSA(pubkeyRSA);
                         PublicEvent.getInstance().getEventMain().updateUser(u);
                         break;
                     }

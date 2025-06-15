@@ -7,14 +7,19 @@ package com.app.component;
 import com.app.event.EventMessage;
 import com.app.event.PublicEvent;
 import com.app.form.Login;
+import com.app.model.Model_Key;
 import com.app.model.Model_Login;
 import com.app.model.Model_Message;
 import com.app.model.Model_Register;
+import com.app.security.KeyUtil;
+import com.app.security.Session;
+import com.app.service.Service;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Base64;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JSeparator;
@@ -29,9 +34,8 @@ public class PanelLoginAndRegister extends javax.swing.JLayeredPane {
     /**
      * Creates new form PanelCover
      */
-    
     private ActionListener event;
-    
+
     public PanelLoginAndRegister(ActionListener eventRegister, ActionListener eventLogin) {
         initComponents();
         setOpaque(false);
@@ -39,11 +43,9 @@ public class PanelLoginAndRegister extends javax.swing.JLayeredPane {
         initRegister(eventRegister);
         login.setVisible(true);
         register.setVisible(false);
-        
-        
-        
+
     }
-    
+
     private void initRegister(ActionListener eventRegister) {
         register.setLayout(new MigLayout("wrap", "push[center]push", "push[]20[]10[]10[]10[]10[]10[]30[]20[]20[]150"));
 
@@ -108,25 +110,30 @@ public class PanelLoginAndRegister extends javax.swing.JLayeredPane {
         cmd.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                Model_Key key = KeyUtil.getInstance().createdKey();
+
                 Model_Register data = new Model_Register(
                         tfUser.getText().trim(),
                         String.copyValueOf(pfPassword.getPassword()),
                         tfFullName.getText().trim(),
                         tfMail.getText().trim(),
-                        tfPhone.getText().trim()
+                        tfPhone.getText().trim(),
+                        Base64.getEncoder().encodeToString(key.getDsa_public_key().getEncoded()),
+                        Base64.getEncoder().encodeToString(key.getRsa_public_key().getEncoded())
                 );
                 PublicEvent.getInstance().getEventLogin().register(data, new EventMessage() {
                     @Override
                     public void callMessage(Model_Message message) {
-                        
+
                         if (!message.isAction()) {
                             Login.getInstance().showMessage(PanelMessage.MessageType.SUCCESS, message.getMessage());
                         } else {
+                            KeyUtil.getInstance().saveKey(Service.getInstance().getUserAccount().getUserId(), key);
+                            Session.getInstance().setKey(key);
                             PublicEvent.getInstance().getEventMain().initChat();
                         }
                     }
                 });
-                
             }
         });
         register.add(cmd, "w 60%, h 40");
@@ -159,8 +166,7 @@ public class PanelLoginAndRegister extends javax.swing.JLayeredPane {
         register.add(cmdChange, "w 60%, h 40");
     }
 
-    
-   private void initLogin(ActionListener eventLogin) {
+    private void initLogin(ActionListener eventLogin) {
         login.setLayout(new MigLayout("wrap", "push[center]push", "push[]50[]10[]10[]50[]20[]20[]150"));
 
         JLabel label = new JLabel("Sign In");
@@ -192,9 +198,9 @@ public class PanelLoginAndRegister extends javax.swing.JLayeredPane {
         cmdForget.setForegroundOver(new Color(100, 100, 100));
         login.add(cmdForget, "w 60%");
 
-        Color mainColor = new Color(28, 194, 253);   
-        Color hoverColor = new Color(46, 210, 255);  
-        Color clickColor = new Color(12, 162, 220); 
+        Color mainColor = new Color(28, 194, 253);
+        Color hoverColor = new Color(46, 210, 255);
+        Color clickColor = new Color(12, 162, 220);
         Color white = new Color(255, 255, 255);
         Color lightBackground = new Color(245, 250, 252);
         Color lightHover = new Color(230, 245, 250);
@@ -249,6 +255,7 @@ public class PanelLoginAndRegister extends javax.swing.JLayeredPane {
             @Override
             public void actionPerformed(ActionEvent e) {
                 event.actionPerformed(e);
+
             }
         });
         login.add(cmdChange, "w 60%, h 40");
@@ -257,8 +264,7 @@ public class PanelLoginAndRegister extends javax.swing.JLayeredPane {
     public void setEvent(ActionListener event) {
         this.event = event;
     }
-    
-    
+
     public void showLogin(boolean show) {
         if (show) {
             login.setVisible(false);
@@ -268,8 +274,6 @@ public class PanelLoginAndRegister extends javax.swing.JLayeredPane {
             login.setVisible(true);
         }
     }
-
-   
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -318,7 +322,6 @@ public class PanelLoginAndRegister extends javax.swing.JLayeredPane {
     }// </editor-fold>//GEN-END:initComponents
 
 
-    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel login;
     private javax.swing.JPanel register;

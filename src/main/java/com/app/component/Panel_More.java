@@ -9,12 +9,15 @@ import com.app.emoji.Model_Emoji;
 import com.app.enums.MessageType;
 import com.app.event.PublicEvent;
 import com.app.main.Main;
+import com.app.model.Model_Save_Message;
 import com.app.model.Model_Send_Message;
 import com.app.model.UserAccount;
+import com.app.security.ChatManager;
 import com.app.service.Service;
 import com.app.swing.ScrollBar;
 import com.app.swing.WrapLayout;
 import com.app.util.Utils;
+import io.socket.client.Ack;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.event.ActionEvent;
@@ -43,16 +46,15 @@ public class Panel_More extends javax.swing.JPanel {
     /**
      * Creates new form Panel_More
      */
-    
     @Setter
     @Getter
     private UserAccount user;
-    
+
     public Panel_More() {
         initComponents();
         init();
     }
-    
+
     private void init() {
         setLayout(new MigLayout("fillx"));
         panelHeader = new JPanel();
@@ -71,8 +73,8 @@ public class Panel_More extends javax.swing.JPanel {
         //  test color
         add(ch, "w 100%, h 100%");
     }
-    
-     private JButton getButtonImage() {
+
+    private JButton getButtonImage() {
         OptionButton cmd = new OptionButton();
         cmd.setIcon(new ImageIcon(getClass().getResource("/com/app/icon/image.png")));
         cmd.addActionListener(new ActionListener() {
@@ -176,7 +178,7 @@ public class Panel_More extends javax.swing.JPanel {
         });
         return cmd;
     }
-    
+
     private JButton getButton(Model_Emoji data) {
         JButton cmd = new JButton(data.getIcon());
         cmd.setName(data.getId() + "");
@@ -186,23 +188,40 @@ public class Panel_More extends javax.swing.JPanel {
         cmd.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
-                Model_Send_Message message = 
-                        new Model_Send_Message(
+                Model_Send_Message message
+                        = new Model_Send_Message(
                                 MessageType.EMOJI,
                                 Service.getInstance().getUserAccount().getUserId(),
                                 user.getUserId(),
                                 data.getId() + "",
-                                LocalDateTime.now()                        
+                                LocalDateTime.now()
                         );
-                sendMessage(message);
+                send(message);
                 PublicEvent.getInstance().getEventChat().sendMessage(message);
             }
         });
         return cmd;
     }
+
+//    private void sendMessage(Model_Send_Message data) {
+//        Service.getInstance().getClient().emit("send_to_user", data.toJSONObject());
+//    }
     
-     private void sendMessage(Model_Send_Message data) {
-        Service.getInstance().getClient().emit("send_to_user", data.toJSONObject());
+    private void send(Model_Send_Message data) {
+        Model_Save_Message saveMessage;
+        try {
+            saveMessage = ChatManager.getInstance().sendMessage(data, user);
+            Service.getInstance().getClient().emit("send_to_user", data.toJSONObject(), new Ack() {
+                @Override
+                public void call(Object... os) {
+                    saveMessage.setMesage_id(Long.parseLong(os[0].toString()));
+                    ChatManager.getInstance().saveMessage(saveMessage);
+                }
+            });
+        } catch (Exception ex) {
+            System.getLogger(Chat_Bottom.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
+        }
+        System.out.println(data.toJSONObject().toString());
     }
 
     /**
@@ -233,11 +252,10 @@ public class Panel_More extends javax.swing.JPanel {
             }
         }
     }
-     
-     
+
     private JPanel panelHeader;
     private JPanel panelDetail;
-    
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     // End of variables declaration//GEN-END:variables
 }

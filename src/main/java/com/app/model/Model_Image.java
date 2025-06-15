@@ -20,6 +20,7 @@ import org.json.JSONObject;
 public class Model_Image {
     private long fileID;
     private String image;
+    private String fileExtension;
     private int width;
     private int height;
     
@@ -28,6 +29,7 @@ public class Model_Image {
         try {
             fileID = obj.getInt("fileID");
             image = obj.getString("image");
+            fileExtension = obj.getString("fileExtension");
             width = obj.getInt("width");
             height = obj.getInt("height");
         } catch (JSONException e) {

@@ -12,8 +12,14 @@ import org.json.JSONObject;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Model_Receive_Message {
+    private Long messageID;
     private MessageType messageType;
     private long fromUserID;
+    private long toUserID;
+    private String encryptedContent;
+    private String signature;
+    private String encryptedAESKey;
+    private String pubkeyDSAFromUser;
     private String text;
     private Model_Image dataImage;
     private LocalDateTime time;
@@ -29,9 +35,14 @@ public class Model_Receive_Message {
     public Model_Receive_Message(Object json) {
         JSONObject obj = (JSONObject) json;
         try {
+            messageID = obj.getLong("messageID");
             messageType = MessageType.toMessageType(obj.getInt("messageType"));
             fromUserID = obj.getLong("fromUserID");
-            text = obj.getString("text");
+            toUserID = obj.getLong("toUserID");
+            encryptedContent = obj.getString("encryptedContent");
+            signature = obj.getString("signature");
+            encryptedAESKey = obj.getString("encryptedAESKey");
+            pubkeyDSAFromUser = obj.getString("pubkeyDSAFromUser");
             if (!obj.isNull("dataImage")) {
                 dataImage = new Model_Image(obj.get("dataImage"));
             }
@@ -46,7 +57,11 @@ public class Model_Receive_Message {
             JSONObject json = new JSONObject();
             json.put("messageType", messageType.getValue());
             json.put("fromUserID", fromUserID);
-            json.put("text", text);
+            json.put("toUserID", toUserID);
+            json.put("encryptedContent", encryptedContent);
+            json.put("signature", signature);
+            json.put("encryptedAESKey", encryptedAESKey);
+            json.put("pubkeyDSAFromUser", pubkeyDSAFromUser);
             if (dataImage != null) {
                 json.put("dataImage", dataImage.toJsonObject());
             }

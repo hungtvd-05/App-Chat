@@ -13,6 +13,6 @@ import java.util.List;
  */
 public interface EventMenuLeft {
     public void newUser(List<UserAccount> users);
-    public void userConnect(Long userId);
+    public void userConnect(Long userId, String pubkeyDSA, String pubkeyRSA);
     public void userDisconnect(Long userId);
 }

@@ -6,14 +6,15 @@ import com.app.event.PublicEvent;
 import com.app.model.UserAccount;
 import com.app.service.Service;
 import com.app.swing.ComponentResizer;
+import com.app.util.HibernateUtil;
 import com.formdev.flatlaf.FlatLightLaf;
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.sql.SQLException;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.UIManager;
-
-
+import org.h2.tools.Console;
 
 public class Main extends javax.swing.JFrame {
 
@@ -21,10 +22,16 @@ public class Main extends javax.swing.JFrame {
     
     private static Main instance;
 
-    public Main() {
+    public Main() throws SQLException {
+//        Console.main();
         this.instance = this;
         initComponents();
         init();
+        try {
+            HibernateUtil.getSessionFactory();
+        } catch (Exception e) {
+            
+        }
     }
 
     private void init() {
@@ -188,7 +195,13 @@ public class Main extends javax.swing.JFrame {
             }
         }
 
-        java.awt.EventQueue.invokeLater(() -> new Main().setVisible(true));
+        java.awt.EventQueue.invokeLater(() -> {
+            try {
+                new Main().setVisible(true);
+            } catch (SQLException ex) {
+                System.getLogger(Main.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
+            }
+        });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

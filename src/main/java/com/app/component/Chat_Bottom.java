@@ -1,11 +1,15 @@
 package com.app.component;
 
+import com.app.dao.MessageDAO;
 import com.app.enums.MessageType;
 import com.app.event.PublicEvent;
+import com.app.model.Model_Save_Message;
 import com.app.model.Model_Send_Message;
 import com.app.model.UserAccount;
+import com.app.security.ChatManager;
 import com.app.service.Service;
 import com.app.swing.JIMSendTextPane;
+import io.socket.client.Ack;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
@@ -24,6 +28,7 @@ import net.miginfocom.swing.MigLayout;
 public class Chat_Bottom extends javax.swing.JPanel {
 
     private UserAccount user;
+    private MessageDAO messageDAO;
 
     public UserAccount getUser() {
         return user;
@@ -33,13 +38,14 @@ public class Chat_Bottom extends javax.swing.JPanel {
         this.user = user;
         panelMore.setUser(user);
     }
-    
+
     public Chat_Bottom() {
         initComponents();
         init();
     }
-    
+
     private void init() {
+        messageDAO = new MessageDAO();
         mig = new MigLayout("fillx, filly", "0[fill]0[]0[]2", "2[fill]2[]0");
         setLayout(mig);
         JScrollPane scroll = new JScrollPane();
@@ -101,27 +107,39 @@ public class Chat_Bottom extends javax.swing.JPanel {
         panelMore.setVisible(false);
         add(panelMore, "dock south, h 0!");
     }
-    
+
     private void send(Model_Send_Message data) {
-        Service.getInstance().getClient().emit("send_to_user", data.toJSONObject());
+        Model_Save_Message saveMessage;
+        try {
+            saveMessage = ChatManager.getInstance().sendMessage(data, user);
+            Service.getInstance().getClient().emit("send_to_user", data.toJSONObject(), new Ack() {
+                @Override
+                public void call(Object... os) {
+                    saveMessage.setMesage_id(Long.parseLong(os[0].toString()));
+                    ChatManager.getInstance().saveMessage(saveMessage);
+                }
+            });
+        } catch (Exception ex) {
+            System.getLogger(Chat_Bottom.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
+        }
         System.out.println(data.toJSONObject().toString());
     }
-    
+
     private void refresh() {
         revalidate();
     }
-    
+
     private void eventSend(JIMSendTextPane txt) {
         String text = txt.getText().trim();
         if (!txt.equals("")) {
-            Model_Send_Message message =
-                new Model_Send_Message(
-                        MessageType.TEXT,
-                        Service.getInstance().getUserAccount().getUserId(),
-                        user.getUserId(),
-                        text,
-                        LocalDateTime.now()
-                );
+            Model_Send_Message message
+                    = new Model_Send_Message(
+                            MessageType.TEXT,
+                            Service.getInstance().getUserAccount().getUserId(),
+                            user.getUserId(),
+                            text,
+                            LocalDateTime.now()
+                    );
             send(message);
             PublicEvent.getInstance().getEventChat().sendMessage(message);
             txt.setText("");
@@ -131,7 +149,7 @@ public class Chat_Bottom extends javax.swing.JPanel {
             txt.grabFocus();
         }
     }
-    
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -152,7 +170,7 @@ public class Chat_Bottom extends javax.swing.JPanel {
 
     private MigLayout mig;
     private Panel_More panelMore;
-    
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     // End of variables declaration//GEN-END:variables
 }

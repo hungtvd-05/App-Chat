@@ -16,6 +16,8 @@ public class Model_Register {
     private String fullName;
     private String mail;
     private String phone;
+    private String pubkeyDSA; 
+    private String pubkeyRSA;
 
     public JSONObject toJSONObject() {
         try {
@@ -25,6 +27,8 @@ public class Model_Register {
             json.put("fullName", fullName);
             json.put("mail", mail);
             json.put("phone", phone);
+            json.put("pubkeyDSA", pubkeyDSA);
+            json.put("pubkeyRSA", pubkeyRSA);
             return json;
         } catch (JSONException e) {
             System.err.println(e.getMessage());

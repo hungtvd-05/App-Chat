@@ -5,8 +5,10 @@ import com.app.enums.MessageType;
 import com.app.model.History;
 import com.app.model.Model_Image;
 import com.app.model.Model_Receive_Message;
+import com.app.model.Model_Save_Message;
 import com.app.model.Model_Send_Message;
 import com.app.model.UserAccount;
+import com.app.security.ChatManager;
 import com.app.service.Service;
 import com.app.util.Utils;
 import io.socket.client.Ack;
@@ -14,21 +16,13 @@ import java.awt.Adjustable;
 import java.awt.Color;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
-import java.io.File;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JScrollBar;
-import javax.swing.JScrollPane;
-import lombok.Getter;
-import lombok.Setter;
 import net.miginfocom.swing.MigLayout;
-import org.json.JSONObject;
 
 public class Chat_Body extends javax.swing.JPanel {
-    
+
     private UserAccount user;
 
     public Chat_Body() {
@@ -44,43 +38,93 @@ public class Chat_Body extends javax.swing.JPanel {
         spacer.setBackground(new java.awt.Color(255, 255, 255)); // Cùng màu nền với body
         body.add(spacer, "grow, push, wrap");
     }
-    
+
     public void setUser(UserAccount user) {
         clearChat();
         this.user = user;
-        History history = new History(Service.getInstance().getUserAccount().getUserId(), user.getUserId());
-        System.out.println(user.getUserName());
-        Service.getInstance().getClient().emit("list_message", history.toJsonObject() ,new Ack() {
+
+        List<Model_Save_Message> listSave_Messages = ChatManager.getInstance().getHistoryFromDB(user.getUserId());
+        for (Model_Save_Message save_ms : listSave_Messages) {
+
+            try {
+                if (save_ms.getFromUserID() == Service.getInstance().getUserAccount().getUserId()) {
+                    addItemRight(new Model_Send_Message(
+                            save_ms.getMesage_id(),
+                            MessageType.toMessageType(save_ms.getMessageType()),
+                            ChatManager.getInstance().readSenderMessageHistory(save_ms),
+                            save_ms.getFileExtension(),
+                            save_ms.getBlurHash(),
+                            save_ms.getHeight_blur(),
+                            save_ms.getWidth_blur(),
+                            save_ms.getTime()
+                    ));
+                } else {
+                    Model_Receive_Message receive_Message = new Model_Receive_Message(
+                            MessageType.toMessageType(save_ms.getMessageType()),
+                            save_ms.getToUserID(),
+                            ChatManager.getInstance().readSenderMessageHistory(save_ms),
+                            save_ms.getTime()
+                    );
+
+                    receive_Message.setDataImage(
+                            new Model_Image(
+                                    save_ms.getMesage_id(),
+                                    save_ms.getBlurHash(),
+                                    save_ms.getFileExtension(),
+                                    save_ms.getWidth_blur(),
+                                    save_ms.getHeight_blur()));
+
+                    addItemLeft(receive_Message, save_ms.getFileExtension());
+                }
+            } catch (Exception ex) {
+                System.getLogger(Chat_Body.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
+            }
+        }
+
+        long fromMessageID = 0;
+
+        if (listSave_Messages.size() > 0) {
+            fromMessageID = listSave_Messages.getLast().getMesage_id();
+        }
+
+        History history = new History(Service.getInstance().getUserAccount().getUserId(), user.getUserId(), fromMessageID);
+
+        Service.getInstance().getClient().emit("list_message", history.toJsonObject(), new Ack() {
             @Override
             public void call(Object... os) {
-                for (Object o: os) {
-                    System.out.println(((JSONObject) o).toString());
+                for (Object o : os) {
                     Model_Send_Message message = new Model_Send_Message(o);
-                        if (message.getFromUserID() == Service.getInstance().getUserAccount().getUserId()) {
-                            addItemRight(message);
-                        } else {
-                            Model_Receive_Message receive_Message = new Model_Receive_Message(
-                                            message.getMessageType(),
-                                            message.getToUserID(),
-                                            message.getContent(),
-                                            message.getTime()
-                                    ); 
-                            
-                            receive_Message.setDataImage(
-                                    new Model_Image(
-                                            message.getId(),
-                                            message.getBlurHash(),
-                                            message.getWidth_blur(),
-                                            message.getHeight_blur()));
-                            
-                            addItemLeft(receive_Message, message.getFileExtension());
+                    if (message.getFromUserID() == Service.getInstance().getUserAccount().getUserId()) {
+                        addItemRight(message);
+                    } else {
+                        try {
+                            message.setContent(ChatManager.getInstance().receiveMessage(message));
+                        } catch (Exception ex) {
+                            message.setContent("");
                         }
+                        Model_Receive_Message receive_Message = new Model_Receive_Message(
+                                message.getMessageType(),
+                                message.getToUserID(),
+                                message.getContent(),
+                                message.getTime()
+                        );
 
-               }
+                        receive_Message.setDataImage(
+                                new Model_Image(
+                                        message.getId(),
+                                        message.getBlurHash(),
+                                        message.getFileExtension(),
+                                        message.getWidth_blur(),
+                                        message.getHeight_blur()));
+
+                        addItemLeft(receive_Message, message.getFileExtension());
+                    }
+
+                }
             }
         });
     }
-    
+
     public void addItemLeft(Model_Receive_Message data) {
         if (data.getMessageType() == MessageType.TEXT) {
             Chat_Left item = new Chat_Left();
@@ -103,7 +147,7 @@ public class Chat_Body extends javax.swing.JPanel {
         repaint();
         revalidate();
     }
-    
+
     public void addItemLeft(Model_Receive_Message data, String fileExtension) {
         if (data.getMessageType() == MessageType.TEXT) {
             Chat_Left item = new Chat_Left();
@@ -118,17 +162,14 @@ public class Chat_Body extends javax.swing.JPanel {
         } else if (data.getMessageType() == MessageType.IMAGE) {
             Chat_Left item = new Chat_Left();
             item.setText("");
-            
-            
-            
-            
+
             String relativePath = "client_data/" + data.getDataImage().getFileID() + fileExtension;
             if (Utils.isImageFileExists(relativePath)) {
                 item.setImage(relativePath);
             } else {
                 item.setImage(data.getDataImage());
             }
-            
+
             item.setTime(data.getTime());
             body.add(item, "wrap, w 100::80%");
         }
@@ -136,9 +177,6 @@ public class Chat_Body extends javax.swing.JPanel {
         repaint();
         revalidate();
     }
-    
-
-    
 
     public void addItemLeft(String text, String user, Icon... image) {
         Chat_Left_With_Profile item = new Chat_Left_With_Profile();
@@ -172,7 +210,7 @@ public class Chat_Body extends javax.swing.JPanel {
         body.repaint();
         body.revalidate();
     }
-    
+
     public void addItemRight(Model_Send_Message data) {
         if (data.getMessageType() == MessageType.TEXT) {
             Chat_Right item = new Chat_Right();
@@ -193,7 +231,7 @@ public class Chat_Body extends javax.swing.JPanel {
             } else if (data.getFile() != null) {
                 item.setImage(data.getFile());
             } else if (data.getBlurHash().length() > 0) {
-                item.setImage(new Model_Image(data.getId(), data.getBlurHash(), data.getWidth_blur(), data.getHeight_blur()));
+                item.setImage(new Model_Image(data.getId(), data.getBlurHash(), data.getFileExtension(), data.getWidth_blur(), data.getHeight_blur()));
             }
             item.setTime(data.getTime());
             body.add(item, "wrap, al right, w 100::80%");
@@ -203,7 +241,6 @@ public class Chat_Body extends javax.swing.JPanel {
         revalidate();
         scrollToBottom();
     }
-
 
     public void addItemRight(String text, Icon... image) {
         Chat_Right item = new Chat_Right();
@@ -233,7 +270,7 @@ public class Chat_Body extends javax.swing.JPanel {
         body.repaint();
         body.revalidate();
     }
-    
+
     public void clearChat() {
         body.removeAll();
         repaint();
