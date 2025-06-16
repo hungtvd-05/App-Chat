@@ -2,11 +2,13 @@ package com.app.security;
 
 import com.app.dao.MessageDAO;
 import com.app.enums.MessageType;
+import com.app.model.FileData;
 import com.app.model.Model_Receive_Message;
 import com.app.model.Model_Save_Message;
 import com.app.model.Model_Send_Message;
 import com.app.model.UserAccount;
 import com.app.service.Service;
+import java.io.File;
 import javax.crypto.SecretKey;
 import java.security.PrivateKey;
 import java.security.PublicKey;
@@ -26,6 +28,7 @@ public class ChatManager {
 
     // Gửi tin nhắn
     public Model_Save_Message sendMessage(Model_Send_Message sms, UserAccount user) throws Exception {
+        
         // Tạo khóa AES
         SecretKey aesKey = ChatCrypto.generateAESKey();
 
@@ -41,9 +44,6 @@ public class ChatManager {
         PublicKey receiverPublicKey = KeyUtil.getInstance().decodePublicKey(receiverPubkeyRSA, "RSA");
         String encryptedAESKey = ChatCrypto.encryptAESKey(aesKey, receiverPublicKey);
 
-        // Mã hóa khóa AES cho người gửi (để xem lại)
-        String encryptedAESKeyForSender = ChatCrypto.encryptAESKey(aesKey, Session.getInstance().getRsaPublicKey());
-
         sms.setEncryptedContent(encryptedMessage);
         sms.setSignature(signature);
         sms.setEncryptedAESKey(encryptedAESKey);
@@ -56,6 +56,31 @@ public class ChatManager {
                 sms.getTime()
         );
 
+    }
+    
+    public File sendFile(Model_Send_Message sms, UserAccount user, File inputFile) throws Exception {
+        // Tạo khóa AES
+        SecretKey aesKey = ChatCrypto.generateAESKey();
+
+        // Mã hóa file bằng AES
+        FileData encryptedFileData = ChatCrypto.encryptFile(inputFile, aesKey);
+        File encryptedFile = encryptedFileData.getFile();
+        byte[] iv = encryptedFileData.getIv();
+
+        // Ký file gốc bằng DSA
+        PrivateKey senderPrivateKey = Session.getInstance().getDsaPrivateKey();
+        String signature = ChatCrypto.signFile(inputFile, senderPrivateKey);
+
+        // Mã hóa khóa AES bằng RSA của người nhận
+        String receiverPubkeyRSA = user.getPubkeyRSA();
+        PublicKey receiverPublicKey = KeyUtil.getInstance().decodePublicKey(receiverPubkeyRSA, "RSA");
+        String encryptedAESKey = ChatCrypto.encryptAESKey(aesKey, receiverPublicKey);
+        
+        sms.setEncryptedAESKey(encryptedAESKey);
+        sms.setSignature(signature);
+        sms.setEncryptedContent(Base64.getEncoder().encodeToString(iv));
+
+        return encryptedFile;
     }
 
     // Nhận tin nhắn

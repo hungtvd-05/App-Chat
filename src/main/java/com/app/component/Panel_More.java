@@ -104,7 +104,7 @@ public class Panel_More extends javax.swing.JPanel {
                                     user.getUserId(),
                                     "",
                                     LocalDateTime.now());
-                            Service.getInstance().addFile(file, message);
+                            Service.getInstance().addFile(file, message, user);
                             PublicEvent.getInstance().getEventChat().sendMessage(message);
                         }
                     } catch (IOException e) {

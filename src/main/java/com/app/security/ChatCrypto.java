@@ -1,5 +1,9 @@
 package com.app.security;
 
+import com.app.model.FileData;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
@@ -9,6 +13,8 @@ import java.security.*;
 import java.util.Base64;
 import java.security.SecureRandom;
 import javax.crypto.BadPaddingException;
+import javax.crypto.CipherInputStream;
+import javax.crypto.CipherOutputStream;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
@@ -97,5 +103,72 @@ public class ChatCrypto {
         } catch (IllegalBlockSizeException e) {
             throw new Exception("Kích thước khối không hợp lệ: " + e.getMessage());
         }
+    }
+
+    public static FileData encryptFile(File inputFile, SecretKey aesKey) throws Exception {
+        Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+        byte[] iv = new byte[16];
+        new SecureRandom().nextBytes(iv);
+        IvParameterSpec ivSpec = new IvParameterSpec(iv);
+        cipher.init(Cipher.ENCRYPT_MODE, aesKey, ivSpec);
+
+        File tempFile = File.createTempFile("encrypted_", ".enc");
+        tempFile.deleteOnExit(); 
+
+        try (FileInputStream fis = new FileInputStream(inputFile);
+             FileOutputStream fos = new FileOutputStream(tempFile);
+             CipherOutputStream cos = new CipherOutputStream(fos, cipher)) {
+            byte[] buffer = new byte[8192];
+            int bytesRead;
+            while ((bytesRead = fis.read(buffer)) != -1) {
+                cos.write(buffer, 0, bytesRead);
+            }
+            cos.flush(); 
+        }
+        return new FileData(tempFile, iv);
+    }
+
+    public static File decryptFile(File encryptedFile, SecretKey aesKey, byte[] iv, String outputFileName) throws Exception {
+        Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+        IvParameterSpec ivSpec = new IvParameterSpec(iv);
+        cipher.init(Cipher.DECRYPT_MODE, aesKey, ivSpec);
+
+        File outputFile = new File(outputFileName);
+        try (FileInputStream fis = new FileInputStream(encryptedFile); CipherInputStream cis = new CipherInputStream(fis, cipher); FileOutputStream fos = new FileOutputStream(outputFile)) {
+            byte[] buffer = new byte[8192];
+            int bytesRead;
+            while ((bytesRead = cis.read(buffer)) != -1) {
+                fos.write(buffer, 0, bytesRead);
+            }
+        }
+        return outputFile;
+    }
+
+    public static String signFile(File inputFile, PrivateKey privateKey) throws Exception {
+        Signature dsa = Signature.getInstance("SHA256withDSA");
+        dsa.initSign(privateKey);
+        try (FileInputStream fis = new FileInputStream(inputFile)) {
+            byte[] buffer = new byte[8192];
+            int bytesRead;
+            while ((bytesRead = fis.read(buffer)) != -1) {
+                dsa.update(buffer, 0, bytesRead);
+            }
+        }
+        byte[] signature = dsa.sign();
+        return Base64.getEncoder().encodeToString(signature);
+    }
+
+    public static boolean verifyFileSignature(File inputFile, String signatureBase64, PublicKey publicKey) throws Exception {
+        byte[] signature = Base64.getDecoder().decode(signatureBase64);
+        Signature dsa = Signature.getInstance("SHA256withDSA");
+        dsa.initVerify(publicKey);
+        try (FileInputStream fis = new FileInputStream(inputFile)) {
+            byte[] buffer = new byte[8192];
+            int bytesRead;
+            while ((bytesRead = fis.read(buffer)) != -1) {
+                dsa.update(buffer, 0, bytesRead);
+            }
+        }
+        return dsa.verify(signature);
     }
 }

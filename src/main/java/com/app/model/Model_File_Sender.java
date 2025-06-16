@@ -3,19 +3,23 @@ package com.app.model;
 import com.app.event.EventFileSender;
 import com.app.security.ChatManager;
 import com.app.service.Service;
+import com.app.swing.blurHash.BlurHash;
 import io.socket.client.Ack;
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
+import java.awt.Dimension;
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.Base64;
+import javax.imageio.ImageIO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.json.JSONObject;
 
 @Data
 @AllArgsConstructor
@@ -23,9 +27,11 @@ import org.json.JSONObject;
 public class Model_File_Sender {
 
     private Model_Send_Message message;
+    private UserAccount toUser;
     private long fileID;
     private String fileExtensions;
     private File file;
+    private File encryptedFile;
     private long fileSize;
     private RandomAccessFile accFile;
     private Socket socket;
@@ -34,13 +40,12 @@ public class Model_File_Sender {
     private static final int MAX_RETRIES = 3;
     private volatile boolean isSending = false;
 
-    public Model_File_Sender(File file, Socket socket, Model_Send_Message message) throws IOException {
-        accFile = new RandomAccessFile(file, "r");
+    public Model_File_Sender(File file, Socket socket, Model_Send_Message message, UserAccount toUser) throws IOException {
         this.file = file;
         this.socket = socket;
         this.message = message;
         fileExtensions = getExtensions(file.getName());
-        fileSize = accFile.length();
+        this.toUser = toUser;
     }
 
     public synchronized byte[] readFile() throws IOException {
@@ -57,11 +62,9 @@ public class Model_File_Sender {
 
     public synchronized void initSend() {
         if (isSending) {
-            System.out.println("initSend: Already sending, ignoring");
             return;
         }
         if (event == null) {
-            System.out.println("initSend: EventFileSender is null, waiting for addEvent");
             // Trì hoãn initSend, thử lại sau 100ms
             new Thread(() -> {
                 try {
@@ -69,16 +72,16 @@ public class Model_File_Sender {
                     while (event == null && attempts < 10) { // Thử 10 lần (1s)
                         Thread.sleep(100);
                         attempts++;
-                        System.out.println("initSend: Retry attempt " + attempts + ", event=" + event);
                     }
                     if (event == null) {
-                        System.err.println("initSend: EventFileSender still null after retries, aborting");
                         handleError("EventFileSender not set");
                         return;
                     }
                     startSendInternal();
                 } catch (InterruptedException | IOException e) {
                     handleError("Error in delayed initSend: " + e.getMessage());
+                } catch (Exception ex) {
+                    System.getLogger(Model_File_Sender.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
                 }
             }).start();
             return;
@@ -87,19 +90,29 @@ public class Model_File_Sender {
             startSendInternal();
         } catch (IOException e) {
             handleError("Error starting send: " + e.getMessage());
+        } catch (Exception ex) {
+            System.getLogger(Model_File_Sender.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
         }
     }
+    
+    
 
-    private void startSendInternal() throws IOException {
-        System.out.println("startSendInternal: Starting with fileSize=" + fileSize);
+    private void startSendInternal() throws IOException, Exception {
+        
+        encryptedFile = ChatManager.getInstance().sendFile(message, toUser, file);
+        accFile = new RandomAccessFile(encryptedFile, "r");
+        fileSize = accFile.length();
+        
+        convertFileToBlurHash(file, message);
+        message.setFileExtension(fileExtensions);
+        
         isSending = true;
         sentBytes = 0;
-//        message = ChatManager.getInstance().sendMessage(message, user);
         socket.emit("send_to_user", message.toJSONObject(), new Ack() {
             @Override
             public void call(Object... args) {
                 if (args.length > 0) {
-                    fileID = (int) args[0];
+                    fileID = Long.parseLong(args[0].toString());
                     try {
                         File dir = new File("client_data");
                         if (!dir.exists()) {
@@ -141,7 +154,6 @@ public class Model_File_Sender {
 
             // Cập nhật giao diện trước khi gửi
             if (event != null && !data.isFinish()) {
-                System.out.println("may goi cho tao");
                 event.onSending(getPercentage());
             }
 
@@ -181,7 +193,7 @@ public class Model_File_Sender {
                 public void call(Object... os) {
                     if (os.length > 0) {
                         Model_Send_Message msm = new Model_Send_Message(os[0]);
-                        System.out.println(msm);
+                        System.out.println("msm id " + msm.getId());
                         ChatManager.getInstance().saveMessage(
                                 new Model_Save_Message(
                                         msm.getId(),
@@ -230,5 +242,30 @@ public class Model_File_Sender {
 
     public void addEvent(EventFileSender event) {
         this.event = event;
+    }
+    
+    private void convertFileToBlurHash(File file, Model_Send_Message dataImage) throws IOException {
+        BufferedImage img = ImageIO.read(file);
+        Dimension size = getAutoSize(new Dimension(img.getWidth(), img.getHeight()), new Dimension(200, 200));
+        BufferedImage newImage = new BufferedImage(size.width, size.height, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2 = newImage.createGraphics();
+        g2.drawImage(img, 0, 0, size.width, size.height, null);
+        String blurhash = BlurHash.encode(newImage);
+        dataImage.setWidth_blur(size.width);
+        dataImage.setHeight_blur(size.height);
+        dataImage.setBlurHash(blurhash);
+    }
+    
+    private Dimension getAutoSize(Dimension fromSize, Dimension toSize) {
+        int w = toSize.width;
+        int h = toSize.height;
+        int iw = fromSize.width;
+        int ih = fromSize.height;
+        double xScale = (double) w / iw;
+        double yScale = (double) h / ih;
+        double scale = Math.min(xScale, yScale);
+        int width = (int) (scale * iw);
+        int height = (int) (scale * ih);
+        return new Dimension(width, height);
     }
 }

@@ -24,6 +24,7 @@ com\app\component\Chat_Left.class
 com\app\component\Panel_More$5.class
 com\app\component\Chat_Bottom$3.class
 com\app\model\Model_Save_Key.class
+com\app\component\Panel_More$2$1.class
 com\app\swing\blurHash\BlurHash.class
 com\app\swing\WrapLayout.class
 com\app\model\Model_Message.class
@@ -138,6 +139,7 @@ com\app\form\View_Image.class
 com\app\model\Model_File_Sender$1.class
 com\app\form\View_Image$2.class
 com\app\form\Menu_Left.class
+com\app\model\FileData.class
 com\app\form\Login$11.class
 com\app\swing\JIMSendTextPane$WarpColumnFactory.class
 com\app\component\PanelLoginAndRegister.class

@@ -23,7 +23,7 @@ public class Main extends javax.swing.JFrame {
     private static Main instance;
 
     public Main() throws SQLException {
-//        Console.main();
+        Console.main();
         this.instance = this;
         initComponents();
         init();

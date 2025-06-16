@@ -5,7 +5,6 @@ import com.app.event.PublicEvent;
 import com.app.model.Model_File_Receiver;
 import com.app.model.Model_File_Sender;
 import com.app.model.Model_Receive_Message;
-import com.app.model.Model_Save_Message;
 import com.app.model.Model_Send_Message;
 import com.app.model.UserAccount;
 import com.app.security.ChatManager;
@@ -19,7 +18,6 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
-import org.json.JSONObject;
 
 public class Service {
 
@@ -98,8 +96,8 @@ public class Service {
         }
     }
 
-    public Model_File_Sender addFile(File file, Model_Send_Message message) throws IOException {
-        Model_File_Sender data = new Model_File_Sender(file, client, message);
+    public Model_File_Sender addFile(File file, Model_Send_Message message, UserAccount user) throws IOException {
+        Model_File_Sender data = new Model_File_Sender(file, client, message, user);
         message.setFile(data);
         fileSender.add(data);
         if (fileSender.size() == 1) {
