@@ -8,7 +8,6 @@ import com.app.model.Model_Send_Message;
 import com.app.model.UserAccount;
 import com.app.service.Service;
 import javax.crypto.SecretKey;
-import java.nio.file.*;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.*;
@@ -53,8 +52,7 @@ public class ChatManager {
                 sms.getMessageType().getValue(),
                 sms.getFromUserID(),
                 sms.getToUserID(),
-                encryptedMessage,
-                encryptedAESKeyForSender,
+                sms.getContent(),
                 sms.getTime()
         );
 
@@ -133,9 +131,7 @@ public class ChatManager {
                             messageData.getMessageType().getValue(),
                             messageData.getFromUserID(),
                             messageData.getToUserID(),
-                            messageData.getEncryptedContent(),
-                            messageData.getSignature(),
-                            messageData.getEncryptedAESKey(),
+                            decryptedMessage,
                             messageData.getTime()
                     )
             );
@@ -219,9 +215,7 @@ public class ChatManager {
                             messageData.getMessageType().getValue(),
                             messageData.getFromUserID(),
                             messageData.getToUserID(),
-                            messageData.getEncryptedContent(),
-                            messageData.getSignature(),
-                            messageData.getEncryptedAESKey(),
+                            decryptedMessage,
                             messageData.getTime()
                     )
             );
@@ -245,27 +239,4 @@ public class ChatManager {
         ).join();
     }
 
-    // Xem lịch sử tin nhắn của người gửi
-    public String readSenderMessageHistory(Model_Save_Message msm) throws Exception {
-        if (msm.getMessageType() == MessageType.FILE.getValue() || msm.getMessageType() == MessageType.IMAGE.getValue()) {
-            return "";
-        }
-        SecretKey aesKey = ChatCrypto.decryptAESKey(msm.getEncryptedAESKey(), Session.getInstance().getRsaPrivateKey());
-        return ChatCrypto.decryptMessage(msm.getEncryptedContent(), aesKey);
-    }
-
-    // Xem lịch sử tin nhắn của người nhận
-    public static String readReceiverMessageHistory(String senderUsername) throws Exception {
-        String fileName = "receiver_history_" + senderUsername + ".txt";
-        if (Files.exists(Paths.get(fileName))) {
-            return Files.readString(Paths.get(fileName));
-        }
-        return "No message history found.";
-    }
-
-    // Hàm giả lập lấy public key từ server
-    private static String getPublicKeyFromServer(String username, String algorithm) throws Exception {
-        // TODO: Gọi API server để lấy public key từ MySQL
-        return "mock_public_key"; // Thay bằng logic thực
-    }
 }

@@ -12,7 +12,7 @@ import org.json.JSONObject;
 public class Model_Package_Sender {
     private long fileID;
     private long offset;
-    private byte[] data;
+    private String data;
     private boolean finish;
 
     public JSONObject toJsonObject() {

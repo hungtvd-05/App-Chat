@@ -51,7 +51,7 @@ public class Chat_Body extends javax.swing.JPanel {
                     addItemRight(new Model_Send_Message(
                             save_ms.getMesage_id(),
                             MessageType.toMessageType(save_ms.getMessageType()),
-                            ChatManager.getInstance().readSenderMessageHistory(save_ms),
+                            save_ms.getContent(),
                             save_ms.getFileExtension(),
                             save_ms.getBlurHash(),
                             save_ms.getHeight_blur(),
@@ -62,7 +62,7 @@ public class Chat_Body extends javax.swing.JPanel {
                     Model_Receive_Message receive_Message = new Model_Receive_Message(
                             MessageType.toMessageType(save_ms.getMessageType()),
                             save_ms.getToUserID(),
-                            ChatManager.getInstance().readSenderMessageHistory(save_ms),
+                            save_ms.getContent(),
                             save_ms.getTime()
                     );
 

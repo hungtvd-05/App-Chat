@@ -30,12 +30,8 @@ public class Model_Save_Message {
     private long fromUserID;
     @Column(name = "to_user_id")
     private long toUserID;
-    @Column(name = "encrypted_content", columnDefinition = "TEXT")
-    private String encryptedContent;
-    @Column(name = "signature", columnDefinition = "TEXT")
-    private String signature = "";
-    @Column(name = "encrypted_aes_key", columnDefinition = "TEXT")
-    private String encryptedAESKey;
+    @Column(name = "content", columnDefinition = "TEXT")
+    private String content;
     @Column(name = "file_extension")
     private String fileExtension = "";
     @Column(name = "blurhash")
@@ -47,23 +43,20 @@ public class Model_Save_Message {
     @Column(name = "created_at")
     private LocalDateTime time;
 
-    public Model_Save_Message(int messageType, long fromUserID, long toUserID, String encryptedContent, String encryptedAESKey, LocalDateTime time) {
+    public Model_Save_Message(int messageType, long fromUserID, long toUserID, String content, LocalDateTime time) {
         this.messageType = messageType;
         this.fromUserID = fromUserID;
         this.toUserID = toUserID;
-        this.encryptedContent = encryptedContent;
-        this.encryptedAESKey = encryptedAESKey;
+        this.content = content;
         this.time = time;
     }
 
-    public Model_Save_Message(long mesage_id, int messageType, long fromUserID, long toUserID, String encryptedContent, String signature, String encryptedAESKey, LocalDateTime time) {
+    public Model_Save_Message(long mesage_id, int messageType, long fromUserID, long toUserID, String content, LocalDateTime time) {
         this.mesage_id = mesage_id;
         this.messageType = messageType;
         this.fromUserID = fromUserID;
         this.toUserID = toUserID;
-        this.encryptedContent = encryptedContent;
-        this.signature = signature;
-        this.encryptedAESKey = encryptedAESKey;
+        this.content = content;
         this.time = time;
     }
     
@@ -72,9 +65,7 @@ public class Model_Save_Message {
         this.messageType = messageType;
         this.fromUserID = fromUserID;
         this.toUserID = toUserID;
-        this.encryptedContent = "";
-        this.signature = "";
-        this.encryptedAESKey = "";
+        this.content = "";
         this.fileExtension = fileExtension;
         this.blurHash = blurHash;
         this.height_blur = height_blur;

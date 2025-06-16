@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.util.Base64;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -132,7 +133,7 @@ public class Model_File_Sender {
             data.setOffset(accFile.getFilePointer());
             byte[] bytes = readFile();
             if (bytes != null) {
-                data.setData(bytes);
+                data.setData(Base64.getEncoder().encodeToString(bytes));
                 data.setFinish(false);
             } else {
                 data.setFinish(true);
