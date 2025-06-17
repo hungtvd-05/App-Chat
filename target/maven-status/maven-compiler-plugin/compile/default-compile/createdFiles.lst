@@ -3,6 +3,7 @@ com\app\component\MenuButton.class
 com\app\emoji\Model_Emoji.class
 com\app\model\Model_Image.class
 com\app\component\Chat_Bottom$2.class
+com\app\model\Model_File_Receiver$3.class
 com\app\swing\JIMSendTextPane$WarpEditorKit.class
 com\app\swing\Progress.class
 com\app\component\PanelVerifyMail$1.class

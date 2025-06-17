@@ -21,6 +21,7 @@ import java.util.Base64;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Model_File_Receiver {
+
     private long fileID;
     private File file;
     private long fileSize;
@@ -43,7 +44,7 @@ public class Model_File_Receiver {
         this.encryptedAESKey = dataImage.getEncryptedAESKey();
         this.pubkeyDSAFromUser = dataImage.getPubkeyDSAFromUser();
         this.fileExtention = dataImage.getFileExtension();
-        
+
         System.out.println("Model_File_Receiver initialized:");
         System.out.println("fileID: " + fileID);
         System.out.println("encryptedContent: " + encryptedContent);
@@ -51,6 +52,25 @@ public class Model_File_Receiver {
         System.out.println("encryptedAESKey: " + encryptedAESKey);
         System.out.println("pubkeyDSAFromUser: " + pubkeyDSAFromUser);
         System.out.println("fileExtention: " + fileExtention);
+
+        if (encryptedContent == null || encryptedContent.equals("")
+                || signature == null || signature.equals("")
+                || encryptedAESKey == null || encryptedAESKey.equals("")
+                || pubkeyDSAFromUser == null || pubkeyDSAFromUser.equals("")) {
+            socket.emit("get_message_by_id", fileID, new Ack() {
+                @Override
+                public void call(Object... os) {
+                    System.out.println("yeu cau duoc tra ve");
+                    Model_Send_Message msm = new Model_Send_Message(os[0]);
+                    System.out.println(msm);
+                    encryptedContent = msm.getEncryptedContent();
+                    signature = msm.getSignature();
+                    encryptedAESKey = msm.getEncryptedAESKey();
+                    pubkeyDSAFromUser = msm.getPubkeyDSAFromUser();
+                }
+            });
+        }
+
     }
 
     public void initReceive() {
@@ -71,7 +91,7 @@ public class Model_File_Receiver {
                         System.out.println("File size: " + fileSize);
                         file = File.createTempFile("encrypted_", ".enc");
                         file.deleteOnExit();
-                                                
+
                         fos = new FileOutputStream(file);
                         event.onStartReceiving();
                         startSaveFile();
@@ -104,9 +124,9 @@ public class Model_File_Receiver {
                     } else if (os.length > 0 && os[0].equals("eof")) {
                         fos.flush();
                         close();
-                        
+
                         ChatManager.getInstance().receiveFile(file, fileID, fileExtention, encryptedContent, signature, encryptedAESKey, pubkeyDSAFromUser);
-                        
+
                         file.delete();
                         event.onFinish(new File(PATH_FILE + fileID + fileExtention));
                         Service.getInstance().fileReceiveFinish(Model_File_Receiver.this);
@@ -145,7 +165,7 @@ public class Model_File_Receiver {
     }
 
     public void close() throws IOException {
-        if (fos != null) {            
+        if (fos != null) {
             fos.close();
             fos = null; // Đặt lại để tránh sử dụng sau khi đóng
         }
