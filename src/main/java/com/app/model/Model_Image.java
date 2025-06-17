@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.app.model;
 
 import lombok.AllArgsConstructor;
@@ -10,10 +6,6 @@ import lombok.NoArgsConstructor;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-/**
- *
- * @author LENOVO
- */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -23,6 +15,11 @@ public class Model_Image {
     private String fileExtension;
     private int width;
     private int height;
+    
+    private String encryptedContent;
+    private String signature;
+    private String encryptedAESKey;
+    private String pubkeyDSAFromUser;
     
     public Model_Image(Object json) {
         JSONObject obj = (JSONObject) json;

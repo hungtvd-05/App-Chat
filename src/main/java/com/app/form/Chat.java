@@ -5,7 +5,6 @@ import com.app.component.Chat_Bottom;
 import com.app.component.Chat_Title;
 import com.app.event.EventChat;
 import com.app.event.PublicEvent;
-import com.app.model.Model_Receive_Message;
 import com.app.model.Model_Send_Message;
 import com.app.model.UserAccount;
 import net.miginfocom.swing.MigLayout;
@@ -33,8 +32,8 @@ public class Chat extends javax.swing.JPanel {
             }
 
             @Override
-            public void reiceveMessage(Model_Receive_Message data) {
-                if (chatTitle.getUser().getUserId() == data.getFromUserID()) {
+            public void reiceveMessage(Model_Send_Message data) {
+                if (chatTitle.getUser() != null && chatTitle.getUser().getUserId() == data.getFromUserID()) {
                     chatBody.addItemLeft(data);
                 }
             }

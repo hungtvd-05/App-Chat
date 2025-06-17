@@ -4,7 +4,6 @@ import com.app.emoji.Emogi;
 import com.app.enums.MessageType;
 import com.app.model.History;
 import com.app.model.Model_Image;
-import com.app.model.Model_Receive_Message;
 import com.app.model.Model_Save_Message;
 import com.app.model.Model_Send_Message;
 import com.app.model.UserAccount;
@@ -59,22 +58,17 @@ public class Chat_Body extends javax.swing.JPanel {
                             save_ms.getTime()
                     ));
                 } else {
-                    Model_Receive_Message receive_Message = new Model_Receive_Message(
+
+                    addItemLeft(new Model_Send_Message(
+                            save_ms.getMesage_id(),
                             MessageType.toMessageType(save_ms.getMessageType()),
-                            save_ms.getToUserID(),
                             save_ms.getContent(),
+                            save_ms.getFileExtension(),
+                            save_ms.getBlurHash(),
+                            save_ms.getHeight_blur(),
+                            save_ms.getWidth_blur(),
                             save_ms.getTime()
-                    );
-
-                    receive_Message.setDataImage(
-                            new Model_Image(
-                                    save_ms.getMesage_id(),
-                                    save_ms.getBlurHash(),
-                                    save_ms.getFileExtension(),
-                                    save_ms.getWidth_blur(),
-                                    save_ms.getHeight_blur()));
-
-                    addItemLeft(receive_Message, save_ms.getFileExtension());
+                    ), save_ms.getFileExtension());
                 }
             } catch (Exception ex) {
                 System.getLogger(Chat_Body.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
@@ -102,22 +96,8 @@ public class Chat_Body extends javax.swing.JPanel {
                         } catch (Exception ex) {
                             message.setContent("");
                         }
-                        Model_Receive_Message receive_Message = new Model_Receive_Message(
-                                message.getMessageType(),
-                                message.getToUserID(),
-                                message.getContent(),
-                                message.getTime()
-                        );
 
-                        receive_Message.setDataImage(
-                                new Model_Image(
-                                        message.getId(),
-                                        message.getBlurHash(),
-                                        message.getFileExtension(),
-                                        message.getWidth_blur(),
-                                        message.getHeight_blur()));
-
-                        addItemLeft(receive_Message, message.getFileExtension());
+                        addItemLeft(message, message.getFileExtension());
                     }
 
                 }
@@ -125,22 +105,32 @@ public class Chat_Body extends javax.swing.JPanel {
         });
     }
 
-    public void addItemLeft(Model_Receive_Message data) {
+    public void addItemLeft(Model_Send_Message data) {
         if (data.getMessageType() == MessageType.TEXT) {
             Chat_Left item = new Chat_Left();
-            item.setText(data.getText());
+            item.setText(data.getContent());
             item.setTime(data.getTime());
             body.add(item, "wrap, w 100::80%");
         } else if (data.getMessageType() == MessageType.EMOJI) {
             Chat_Left item = new Chat_Left();
-            item.setEmoji(Emogi.getInstance().getImoji(Integer.valueOf(data.getText())).getIcon());
+            item.setEmoji(Emogi.getInstance().getImoji(Integer.valueOf(data.getContent().toString())).getIcon());
             item.setTime(data.getTime());
             body.add(item, "wrap, w 100::80%");
         } else if (data.getMessageType() == MessageType.IMAGE) {
             Chat_Left item = new Chat_Left();
             item.setText("");
             item.setTime(data.getTime());
-            item.setImage(data.getDataImage());
+            item.setImage(new Model_Image(
+                        data.getId(),
+                        data.getBlurHash(),
+                        data.getFileExtension(),
+                        data.getWidth_blur(),
+                        data.getHeight_blur(),
+                        data.getEncryptedContent(),
+                        data.getSignature(),
+                        data.getEncryptedAESKey(),
+                        data.getPubkeyDSAFromUser()
+                ));
             body.add(item, "wrap, w 100::80%");
         }
         scrollToBottom();
@@ -148,26 +138,37 @@ public class Chat_Body extends javax.swing.JPanel {
         revalidate();
     }
 
-    public void addItemLeft(Model_Receive_Message data, String fileExtension) {
+    public void addItemLeft(Model_Send_Message data, String fileExtension) {
         if (data.getMessageType() == MessageType.TEXT) {
             Chat_Left item = new Chat_Left();
-            item.setText(data.getText());
+            item.setText(data.getContent());
             item.setTime(data.getTime());
             body.add(item, "wrap, w 100::80%");
         } else if (data.getMessageType() == MessageType.EMOJI) {
             Chat_Left item = new Chat_Left();
-            item.setEmoji(Emogi.getInstance().getImoji(Integer.valueOf(data.getText())).getIcon());
+            item.setEmoji(Emogi.getInstance().getImoji(Integer.valueOf(data.getContent())).getIcon());
             item.setTime(data.getTime());
             body.add(item, "wrap, w 100::80%");
         } else if (data.getMessageType() == MessageType.IMAGE) {
             Chat_Left item = new Chat_Left();
             item.setText("");
 
-            String relativePath = "client_data/" + data.getDataImage().getFileID() + fileExtension;
+            String relativePath = "client_data/" + data.getId() + fileExtension;
             if (Utils.isImageFileExists(relativePath)) {
                 item.setImage(relativePath);
             } else {
-                item.setImage(data.getDataImage());
+                
+                item.setImage(new Model_Image(
+                        data.getId(),
+                        data.getBlurHash(),
+                        data.getFileExtension(),
+                        data.getWidth_blur(),
+                        data.getHeight_blur(),
+                        data.getEncryptedContent(),
+                        data.getSignature(),
+                        data.getEncryptedAESKey(),
+                        data.getPubkeyDSAFromUser()
+                ));
             }
 
             item.setTime(data.getTime());
@@ -230,9 +231,10 @@ public class Chat_Body extends javax.swing.JPanel {
                 item.setImage(relativePath);
             } else if (data.getFile() != null) {
                 item.setImage(data.getFile());
-            } else if (data.getBlurHash().length() > 0) {
-                item.setImage(new Model_Image(data.getId(), data.getBlurHash(), data.getFileExtension(), data.getWidth_blur(), data.getHeight_blur()));
-            }
+            } 
+//            else if (data.getBlurHash().length() > 0) {
+//                item.setImage(new Model_Image(data.getId(), data.getBlurHash(), data.getFileExtension(), data.getWidth_blur(), data.getHeight_blur(), data.getContent(), data.getSignature(), data.getEncryptedAESKey(), data.getPubkeyDSAFromUser()));
+//            }
             item.setTime(data.getTime());
             body.add(item, "wrap, al right, w 100::80%");
 

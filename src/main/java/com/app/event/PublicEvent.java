@@ -1,7 +1,5 @@
 package com.app.event;
 
-import lombok.Getter;
-
 public class PublicEvent {
 
     private static PublicEvent instance;

@@ -4,7 +4,7 @@ import com.app.event.EventFileReceiver;
 import com.app.event.PublicEvent;
 import com.app.model.Model_File_Receiver;
 import com.app.model.Model_File_Sender;
-import com.app.model.Model_Receive_Message;
+import com.app.model.Model_Image;
 import com.app.model.Model_Send_Message;
 import com.app.model.UserAccount;
 import com.app.security.ChatManager;
@@ -79,12 +79,13 @@ public class Service {
             client.on("receive_ms", new Emitter.Listener() {
                 @Override
                 public void call(Object... os) {
-                    Model_Receive_Message message = new Model_Receive_Message(os[0]);
+//                    Model_Receive_Message message = new Model_Receive_Message(os[0]);
                     
+                    Model_Send_Message message = new Model_Send_Message(os[0]);
                     try {
-                        message.setText(ChatManager.getInstance().receiveMessage(message));
+                        message.setContent(ChatManager.getInstance().receiveMessage(message));
                     } catch (Exception ex) {
-                        message.setText("");
+                        message.setContent("");
                     }
                     PublicEvent.getInstance().getEventChat().reiceveMessage(message);
                 }
@@ -106,8 +107,8 @@ public class Service {
         return data;
     }
 
-    public void addFileReceiver(long fileID, EventFileReceiver event) throws IOException {
-        Model_File_Receiver data = new Model_File_Receiver(fileID, client, event);
+    public void addFileReceiver(Model_Image dataImage, EventFileReceiver event) throws IOException {
+        Model_File_Receiver data = new Model_File_Receiver(dataImage, client, event);
         fileReceiver.add(data);
         if (fileReceiver.size() == 1) {
             data.initReceive();

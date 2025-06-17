@@ -61,6 +61,7 @@ public class Chat_Item extends javax.swing.JLayeredPane {
     }
     
     public void setImage(boolean right, Model_Image dataImage) {
+        System.out.println("ham nay de nhan file 2");
         JLayeredPane layer = new JLayeredPane();
         layer.setLayout(new FlowLayout(right ? FlowLayout.RIGHT : FlowLayout.LEFT));
         layer.setBorder(new EmptyBorder(0, 5, 0, 5));
@@ -71,6 +72,7 @@ public class Chat_Item extends javax.swing.JLayeredPane {
     }
 
     public void setImage(boolean right, Model_File_Sender fileSender) {
+        System.out.println("ham nay de nhan file 1");
         JLayeredPane layer = new JLayeredPane();
         layer.setLayout(new FlowLayout(right ? FlowLayout.RIGHT : FlowLayout.LEFT));
         layer.setBorder(new EmptyBorder(0, 5, 0, 5));
@@ -81,10 +83,11 @@ public class Chat_Item extends javax.swing.JLayeredPane {
     }
     
     public void setImage(boolean right, Icon... image) {
-        
+        System.out.println("ham nay de nhan file 3");
     }
 
     public void setImage(boolean right, String path) {
+        System.out.println("ham nay de nhan file 4");
         JLayeredPane layer = new JLayeredPane();
         layer.setLayout(new FlowLayout(right ? FlowLayout.RIGHT : FlowLayout.LEFT));
         layer.setBorder(new EmptyBorder(0, 5, 0, 5));

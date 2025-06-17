@@ -9,8 +9,6 @@ import com.app.swing.blurHash.BlurHash;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.SwingUtilities;
@@ -56,11 +54,13 @@ public class Image_Item extends javax.swing.JLayeredPane {
 //    }
     
     public void setImage(Icon image) {
+        System.out.println("ham nay duoc goi zzzzzzzzzzzz");
         pic.setImage(image);
         progress.setVisible(false);
     }
     
     public void setImage(String path) {
+        System.out.println("ham nay duoc goi hhhhhhhhh");
         progress.setVisible(false);
         pic.setImage(new ImageIcon(path));
         pic.repaint();
@@ -68,6 +68,7 @@ public class Image_Item extends javax.swing.JLayeredPane {
     }
 
     public void setImage(Model_Image dataImage, Chat_Image chat_Image) {
+        System.out.println("ham nay duoc goi kkkkkkkK");
         int width = dataImage.getWidth();
         int height = dataImage.getHeight();
         int[] data = BlurHash.decode(dataImage.getImage(), width, height, 1);
@@ -76,7 +77,9 @@ public class Image_Item extends javax.swing.JLayeredPane {
         Icon icon = new ImageIcon(img);
         pic.setImage(icon);
         try {
-            Service.getInstance().addFileReceiver(dataImage.getFileID(), new EventFileReceiver() {
+            Service.getInstance().addFileReceiver(
+                    dataImage,
+                    new EventFileReceiver() {
                 @Override
                 public void onReceiving(double percentage) {
                     System.out.println("dang goi 1");

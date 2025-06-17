@@ -11,6 +11,7 @@ import org.hibernate.query.Query;
 public class MessageDAO {
     public CompletableFuture<Void> saveMessage(Model_Save_Message ms) {
         return CompletableFuture.runAsync(() -> {
+            System.out.println(ms);
             Transaction transaction = null;
             try (Session session = HibernateUtil.getSessionFactory().openSession()) {
                 transaction = session.beginTransaction();

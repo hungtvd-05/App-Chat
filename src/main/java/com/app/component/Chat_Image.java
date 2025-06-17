@@ -22,6 +22,7 @@ public class Chat_Image extends javax.swing.JPanel {
     }
 
     public void addImage(Model_File_Sender fileSender) {
+        System.out.println("ham nay dc goi 11");
         Icon image = new ImageIcon(fileSender.getFile().getAbsolutePath());
         Image_Item pic = new Image_Item();
         pic.setPreferredSize(getAutoSize(image, 200, 200));
@@ -29,24 +30,26 @@ public class Chat_Image extends javax.swing.JPanel {
         addEvent(pic, image);
         add(pic, "wrap");
     }
-    
+
     public void addImage(Model_Image dataImage) {
+        System.out.println("ham nay dc goi 22");
         Image_Item pic = new Image_Item();
         pic.setPreferredSize(new Dimension(dataImage.getWidth(), dataImage.getHeight()));
         pic.setImage(dataImage, this);
         //  addEvent(pic, image);
         add(pic, "wrap");
     }
-    
+
     public void addImage(String path) {
-            Icon image = new ImageIcon(path);
-            Image_Item pic = new Image_Item();
-            pic.setPreferredSize(getAutoSize(image, 200, 200));
-            pic.setImage(image);
-            addEvent(pic, image);
-            add(pic, "wrap");
+        System.out.println("ham nay dc goi 33");
+        Icon image = new ImageIcon(path);
+        Image_Item pic = new Image_Item();
+        pic.setPreferredSize(getAutoSize(image, 200, 200));
+        pic.setImage(image);
+        addEvent(pic, image);
+        add(pic, "wrap");
     }
-    
+
     public void addEvent(Component com, Icon image) {
         com.setCursor(new Cursor(Cursor.HAND_CURSOR));
         com.addMouseListener(new MouseAdapter() {

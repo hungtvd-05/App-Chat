@@ -1,6 +1,7 @@
 package com.app.model;
 
 import com.app.event.EventFileReceiver;
+import com.app.security.ChatManager;
 import com.app.service.Service;
 import io.socket.client.Ack;
 import io.socket.client.Socket;
@@ -23,16 +24,33 @@ public class Model_File_Receiver {
     private long fileID;
     private File file;
     private long fileSize;
+    private String encryptedContent;
+    private String signature;
+    private String encryptedAESKey;
+    private String pubkeyDSAFromUser;
     private String fileExtention;
     private FileOutputStream fos;
     private Socket socket;
     private EventFileReceiver event;
     private final String PATH_FILE = "client_data/";
 
-    public Model_File_Receiver(long fileID, Socket socket, EventFileReceiver event) {
-        this.fileID = fileID;
+    public Model_File_Receiver(Model_Image dataImage, Socket socket, EventFileReceiver event) {
+        this.fileID = dataImage.getFileID();
         this.socket = socket;
         this.event = event;
+        this.encryptedContent = dataImage.getEncryptedContent();
+        this.signature = dataImage.getSignature();
+        this.encryptedAESKey = dataImage.getEncryptedAESKey();
+        this.pubkeyDSAFromUser = dataImage.getPubkeyDSAFromUser();
+        this.fileExtention = dataImage.getFileExtension();
+        
+        System.out.println("Model_File_Receiver initialized:");
+        System.out.println("fileID: " + fileID);
+        System.out.println("encryptedContent: " + encryptedContent);
+        System.out.println("signature: " + signature);
+        System.out.println("encryptedAESKey: " + encryptedAESKey);
+        System.out.println("pubkeyDSAFromUser: " + pubkeyDSAFromUser);
+        System.out.println("fileExtention: " + fileExtention);
     }
 
     public void initReceive() {
@@ -45,14 +63,15 @@ public class Model_File_Receiver {
                         if (!dir.exists()) {
                             dir.mkdirs();
                         }
-                        fileExtention = os[0].toString();
+//                        fileExtention = os[0].toString();
                         if (!fileExtention.startsWith(".")) {
                             fileExtention = "." + fileExtention;
                         }
-                        System.out.println("File extension: " + fileExtention);
                         fileSize = Long.parseLong(os[1].toString());
                         System.out.println("File size: " + fileSize);
-                        file = new File(PATH_FILE + fileID + fileExtention);
+                        file = File.createTempFile("encrypted_", ".enc");
+                        file.deleteOnExit();
+                                                
                         fos = new FileOutputStream(file);
                         event.onStartReceiving();
                         startSaveFile();
@@ -83,7 +102,12 @@ public class Model_File_Receiver {
                         event.onReceiving(getPercentage());
                         startSaveFile();
                     } else if (os.length > 0 && os[0].equals("eof")) {
+                        fos.flush();
                         close();
+                        
+                        ChatManager.getInstance().receiveFile(file, fileID, fileExtention, encryptedContent, signature, encryptedAESKey, pubkeyDSAFromUser);
+                        
+                        file.delete();
                         event.onFinish(new File(PATH_FILE + fileID + fileExtention));
                         Service.getInstance().fileReceiveFinish(Model_File_Receiver.this);
                     } else if (os.length > 0 && os[0].equals("error")) {
@@ -103,6 +127,8 @@ public class Model_File_Receiver {
                     } catch (IOException ex) {
                         ex.printStackTrace();
                     }
+                } catch (Exception ex) {
+                    System.getLogger(Model_File_Receiver.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
                 }
             }
         });
@@ -119,7 +145,7 @@ public class Model_File_Receiver {
     }
 
     public void close() throws IOException {
-        if (fos != null) {
+        if (fos != null) {            
             fos.close();
             fos = null; // Đặt lại để tránh sử dụng sau khi đóng
         }

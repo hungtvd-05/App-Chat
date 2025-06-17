@@ -23,14 +23,17 @@ public class Chat_Left extends javax.swing.JLayeredPane {
     }
        
     public void setImage(Model_File_Sender fileSender) {
+        System.out.println("ham nay duoc goi de set anh 1");
         txt.setImage(false, fileSender);
     }
     
     public void setImage(String path) {
+        System.out.println("ham nay duoc goi de set anh");
         txt.setImage(false, path);
     }
     
     public void setImage(Model_Image dataImage) {
+        System.out.println("ham nay duoc goi de set anh 2");
         txt.setImage(false, dataImage);
     }
     

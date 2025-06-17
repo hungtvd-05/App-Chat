@@ -36,7 +36,6 @@ com\app\swing\ModernScrollBarUI$InvisibleScrollBarButton.class
 com\app\swing\blurHash\Base83.class
 com\app\swing\ImageAvatar.class
 com\app\dao\MessageDAO.class
-com\app\model\Model_Receive_Message.class
 com\app\component\Item_People$1.class
 com\app\component\Image_Item$2.class
 com\app\component\Panel_More$3.class
