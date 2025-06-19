@@ -41,11 +41,17 @@ public class Chat_Body extends javax.swing.JPanel {
     public void setUser(UserAccount user) {
         clearChat();
         this.user = user;
+        String lastDate = "";
 
         List<Model_Save_Message> listSave_Messages = ChatManager.getInstance().getHistoryFromDB(user.getUserId());
         for (Model_Save_Message save_ms : listSave_Messages) {
 
             try {
+                String currentDate = Utils.formatTime(save_ms.getTime(), "MMM dd, yyyy");
+                if (!currentDate.equals(lastDate)) {
+                    addDate(currentDate);
+                    lastDate = currentDate;
+                }
                 if (save_ms.getFromUserID() == Service.getInstance().getUserAccount().getUserId()) {
                     addItemRight(new Model_Send_Message(
                             save_ms.getMesage_id(),
@@ -86,8 +92,14 @@ public class Chat_Body extends javax.swing.JPanel {
         Service.getInstance().getClient().emit("list_message", history.toJsonObject(), new Ack() {
             @Override
             public void call(Object... os) {
+                String lastDate = "";
                 for (Object o : os) {
                     Model_Send_Message message = new Model_Send_Message(o);
+                    String currentDate = Utils.formatTime(message.getTime(), "MMM dd, yyyy");
+                    if (!currentDate.equals(lastDate)) {
+                        addDate(currentDate);
+                        lastDate = currentDate;
+                    }
                     if (message.getFromUserID() == Service.getInstance().getUserAccount().getUserId()) {
                         addItemRight(message);
                     } else {

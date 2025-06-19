@@ -23,7 +23,7 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace min="-2" max="-2" attributes="0"/>
-              <Component id="imageAvatar1" min="-2" pref="35" max="-2" attributes="0"/>
+              <Component id="imageAvatar" min="-2" pref="35" max="-2" attributes="0"/>
               <EmptySpace min="-2" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Component id="lb" max="32767" attributes="0"/>
@@ -50,7 +50,7 @@
                           <Component id="activeStatus" max="32767" attributes="0"/>
                       </Group>
                   </Group>
-                  <Component id="imageAvatar1" min="-2" pref="35" max="-2" attributes="0"/>
+                  <Component id="imageAvatar" min="-2" pref="35" max="-2" attributes="0"/>
               </Group>
               <EmptySpace min="-2" max="-2" attributes="0"/>
           </Group>
@@ -58,7 +58,7 @@
     </DimensionLayout>
   </Layout>
   <SubComponents>
-    <Container class="com.app.swing.ImageAvatar" name="imageAvatar1">
+    <Container class="com.app.swing.ImageAvatar" name="imageAvatar">
       <Properties>
         <Property name="borderSize" type="int" value="1"/>
         <Property name="image" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">

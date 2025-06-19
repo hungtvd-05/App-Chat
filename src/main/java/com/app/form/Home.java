@@ -1,5 +1,6 @@
 package com.app.form;
 
+import com.app.event.PublicEvent;
 import com.app.model.UserAccount;
 import net.miginfocom.swing.MigLayout;
 
@@ -29,6 +30,8 @@ public class Home extends javax.swing.JLayeredPane {
     public void updateUser(UserAccount user) {
         chat.updateUser(user);
     }
+    
+    
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents

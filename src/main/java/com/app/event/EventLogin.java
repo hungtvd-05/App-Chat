@@ -8,6 +8,8 @@ public interface EventLogin {
     public void login(Model_Login data);
 
     public void register(Model_Register data, EventMessage event);
+    
+    public void initRegister(Model_Register data, EventMessage event);
 
     public void goRegister();
 

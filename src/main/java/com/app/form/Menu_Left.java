@@ -82,6 +82,12 @@ public class Menu_Left extends javax.swing.JPanel {
             }
         });
         showPeople();
+        setLayout(new java.awt.BorderLayout());
+        removeAll();
+        add(menu, java.awt.BorderLayout.NORTH);
+        add(sp, java.awt.BorderLayout.CENTER);
+        revalidate();
+        repaint();
     }
 
     private void showPeople() {

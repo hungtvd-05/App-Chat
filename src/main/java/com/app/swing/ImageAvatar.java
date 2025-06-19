@@ -4,9 +4,11 @@
  */
 package com.app.swing;
 
+import com.app.event.EventClick;
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -14,19 +16,47 @@ import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.util.Base64;
+import javax.imageio.ImageIO;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 
 public class ImageAvatar extends JComponent {
+
     public Icon getImage() {
         return image;
     }
 
     public void setImage(Icon image) {
         this.image = image;
+        repaint();
+        revalidate();
     }
+    
+    public void setImage(String base64) {
+        try {
+            byte[] decodedBytes = Base64.getDecoder().decode(base64);
+            Image image = ImageIO.read(new ByteArrayInputStream(decodedBytes));
+            if (image != null) {
+                Icon icon = new ImageIcon(image);
+                setImage(icon);
+            } else {
+                System.err.println("Error decode base64");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (IllegalArgumentException e) {
+            System.err.println(e);
+        }
+    }
+    
+    
 
     public int getBorderSize() {
         return borderSize;
@@ -42,6 +72,36 @@ public class ImageAvatar extends JComponent {
 
     public void setBorderColor(Color borderColor) {
         this.borderColor = borderColor;
+    }
+
+    public void addEvent(EventClick event) {
+        if (event != null) {
+            setCursor(new Cursor(Cursor.HAND_CURSOR));
+            this.addMouseListener(new MouseListener() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                }
+
+                @Override
+                public void mousePressed(MouseEvent e) {
+                    if (event != null) {
+                        event.onClick();
+                    }
+                }
+
+                @Override
+                public void mouseReleased(MouseEvent e) {
+                }
+
+                @Override
+                public void mouseEntered(MouseEvent e) {
+                }
+
+                @Override
+                public void mouseExited(MouseEvent e) {
+                }
+            });
+        }
     }
 
     private Icon image;

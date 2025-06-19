@@ -110,7 +110,30 @@ public class PanelLoginAndRegister extends javax.swing.JLayeredPane {
         cmd.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Model_Key key = KeyUtil.getInstance().createdKey();
+//                Model_Key key = KeyUtil.getInstance().createdKey();
+//
+//                Model_Register data = new Model_Register(
+//                        tfUser.getText().trim(),
+//                        String.copyValueOf(pfPassword.getPassword()),
+//                        tfFullName.getText().trim(),
+//                        tfMail.getText().trim(),
+//                        tfPhone.getText().trim(),
+//                        Base64.getEncoder().encodeToString(key.getDsa_public_key().getEncoded()),
+//                        Base64.getEncoder().encodeToString(key.getRsa_public_key().getEncoded())
+//                );
+//                PublicEvent.getInstance().getEventLogin().register(data, new EventMessage() {
+//                    @Override
+//                    public void callMessage(Model_Message message) {
+//
+//                        if (!message.isAction()) {
+//                            Login.getInstance().showMessage(PanelMessage.MessageType.SUCCESS, message.getMessage());
+//                        } else {
+//                            KeyUtil.getInstance().saveKey(Service.getInstance().getUserAccount().getUserId(), key);
+//                            Session.getInstance().setKey(key);
+//                            PublicEvent.getInstance().getEventMain().initChat();
+//                        }
+//                    }
+//                });
 
                 Model_Register data = new Model_Register(
                         tfUser.getText().trim(),
@@ -118,19 +141,16 @@ public class PanelLoginAndRegister extends javax.swing.JLayeredPane {
                         tfFullName.getText().trim(),
                         tfMail.getText().trim(),
                         tfPhone.getText().trim(),
-                        Base64.getEncoder().encodeToString(key.getDsa_public_key().getEncoded()),
-                        Base64.getEncoder().encodeToString(key.getRsa_public_key().getEncoded())
+                        "",
+                        "",
+                        ""
                 );
-                PublicEvent.getInstance().getEventLogin().register(data, new EventMessage() {
+
+                PublicEvent.getInstance().getEventLogin().initRegister(data, new EventMessage() {
                     @Override
                     public void callMessage(Model_Message message) {
-
                         if (!message.isAction()) {
-                            Login.getInstance().showMessage(PanelMessage.MessageType.SUCCESS, message.getMessage());
-                        } else {
-                            KeyUtil.getInstance().saveKey(Service.getInstance().getUserAccount().getUserId(), key);
-                            Session.getInstance().setKey(key);
-                            PublicEvent.getInstance().getEventMain().initChat();
+                            Login.getInstance().showMessage(PanelMessage.MessageType.ERROR, message.getMessage());
                         }
                     }
                 });

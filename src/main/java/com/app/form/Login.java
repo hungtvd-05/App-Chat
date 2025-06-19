@@ -47,6 +47,9 @@ public class Login extends javax.swing.JLayeredPane {
         init();
     }
 
+    
+    
+
     private void init() {
 
         PublicEvent.getInstance().setEventLogin(new EventLogin() {
@@ -88,7 +91,7 @@ public class Login extends javax.swing.JLayeredPane {
                                         setVisible(false);
                                     } else {
                                         PublicEvent.getInstance().getEventMain().showLoading(false);
-                                        Login.getInstance().showMessage(PanelMessage.MessageType.ERROR, "Sai mat khau");
+                                        Login.getInstance().showMessage(PanelMessage.MessageType.ERROR, "Invalid username or password.");
                                     }
                                 } else {
                                     PublicEvent.getInstance().getEventMain().showLoading(false);
@@ -102,26 +105,54 @@ public class Login extends javax.swing.JLayeredPane {
 
             @Override
             public void register(Model_Register data, EventMessage message) {
-                Service.getInstance().getClient().emit("register", data.toJSONObject(), new Ack() {
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() { 
+                        PublicEvent.getInstance().getEventMain().showLoading(true);
+                        Service.getInstance().getClient().emit("register", data.toJSONObject(), new Ack() {
+                            @Override
+                            public void call(Object... os) {
+                                if (os.length > 0) {
+                                    Model_Message ms = new Model_Message((boolean) os[0], os.length > 1 && os[1] != null ? os[1].toString() : "");
+
+                                    if (ms.isAction()) {
+                                        UserAccount userAccount = new UserAccount((Object) os[2]);
+                                        Service.getInstance().setUserAccount(userAccount);
+                                        Main.getInstance().setTitle(userAccount.getUserName());
+                                    }
+
+                                    message.callMessage(ms);
+
+                                }
+
+                            }
+                        });
+                        PublicEvent.getInstance().getEventMain().showLoading(false);
+                    }
+                }).start();
+            }
+            
+            @Override
+            public void initRegister(Model_Register data, EventMessage message) {
+                PublicEvent.getInstance().getEventMain().showLoading(true);
+                Service.getInstance().getClient().emit("init_register", data.toJSONObject(), new Ack() {
                     @Override
                     public void call(Object... os) {
+                        PublicEvent.getInstance().getEventMain().showLoading(false);
                         if (os.length > 0) {
-                            Model_Message ms = new Model_Message((boolean) os[0], os.length > 1 && os[1] != null ? os[1].toString() : "");
-
-                            if (ms.isAction()) {
-                                UserAccount userAccount = new UserAccount((Object) os[2]);
-                                Service.getInstance().setUserAccount(userAccount);
-                                Main.getInstance().setTitle(userAccount.getUserName());
+                            boolean isAction = (boolean) os[0];
+                            if (isAction) {
+                                panelVerifyMail.setVisible(true,data);
+                            } else {
+                                message.callMessage(new Model_Message(isAction, os[1].toString()));
                             }
-
-                            message.callMessage(ms);
-
+                            
                         }
-                        System.out.println("Hello 5");
-
                     }
                 });
+                PublicEvent.getInstance().getEventMain().showLoading(false);
             }
+            
 
             @Override
             public void goRegister() {

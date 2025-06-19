@@ -19,6 +19,9 @@ public class Item_People extends javax.swing.JPanel {
         initComponents();
         lb.setText(userAccount.getUserName());
         activeStatus.setActive(userAccount.isStatus());
+        if (userAccount.getImage().length() > 0) {
+            imageAvatar.setImage(userAccount.getImage());
+        }
         init();
     }
     
@@ -59,15 +62,15 @@ public class Item_People extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        imageAvatar1 = new com.app.swing.ImageAvatar();
+        imageAvatar = new com.app.swing.ImageAvatar();
         lb = new javax.swing.JLabel();
         lbStatus = new javax.swing.JLabel();
         activeStatus = new com.app.swing.ActiveStatus();
 
         setBackground(new java.awt.Color(255, 255, 255));
 
-        imageAvatar1.setBorderSize(1);
-        imageAvatar1.setImage(new javax.swing.ImageIcon(getClass().getResource("/com/app/icon/user.png"))); // NOI18N
+        imageAvatar.setBorderSize(1);
+        imageAvatar.setImage(new javax.swing.ImageIcon(getClass().getResource("/com/app/icon/user.png"))); // NOI18N
 
         lb.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         lb.setText("Name");
@@ -84,7 +87,7 @@ public class Item_People extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(imageAvatar1, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(imageAvatar, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(lb, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -105,7 +108,7 @@ public class Item_People extends javax.swing.JPanel {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(lbStatus, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(activeStatus, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                    .addComponent(imageAvatar1, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(imageAvatar, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -113,7 +116,7 @@ public class Item_People extends javax.swing.JPanel {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private com.app.swing.ActiveStatus activeStatus;
-    private com.app.swing.ImageAvatar imageAvatar1;
+    private com.app.swing.ImageAvatar imageAvatar;
     private javax.swing.JLabel lb;
     private javax.swing.JLabel lbStatus;
     // End of variables declaration//GEN-END:variables

@@ -1,5 +1,6 @@
 package com.app.main;
 
+import com.app.component.glasspanepopup.GlassPanePopup;
 import com.app.event.EventImageView;
 import com.app.event.EventMain;
 import com.app.event.PublicEvent;
@@ -23,7 +24,8 @@ public class Main extends javax.swing.JFrame {
     private static Main instance;
 
     public Main() throws SQLException {
-        Console.main();
+        GlassPanePopup.install(this);
+//        Console.main();
         this.instance = this;
         initComponents();
         init();
@@ -35,6 +37,8 @@ public class Main extends javax.swing.JFrame {
     }
 
     private void init() {
+        setSize(1000, 820);
+        setLocationRelativeTo(null);
         java.net.URL imgURL = getClass().getResource("/com/app/icon/icon.png");
         if (imgURL != null) {
             setIconImage(new ImageIcon(imgURL).getImage());
@@ -63,10 +67,10 @@ public class Main extends javax.swing.JFrame {
 
             @Override
             public void initChat() {
+                PublicEvent.getInstance().getEventMenuRight().onRefresh();
                 home.setVisible(true);
                 login.setVisible(false);
                 Service.getInstance().getClient().emit("list_user", Service.getInstance().getUserAccount().getUserId());
-                
             }
 
             @Override

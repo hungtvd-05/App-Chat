@@ -4,6 +4,16 @@
  */
 package com.app.form;
 
+import com.app.component.glasspanepopup.GlassPanePopup;
+import com.app.event.EventMenuRight;
+import com.app.event.PublicEvent;
+import com.app.service.Service;
+import java.awt.BorderLayout;
+import java.awt.Cursor;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.JButton;
+
 /**
  *
  * @author Finn
@@ -15,6 +25,51 @@ public class Menu_Right extends javax.swing.JPanel {
      */
     public Menu_Right() {
         initComponents();
+        init();
+    }
+    
+    private void init() {
+        
+        PublicEvent.getInstance().setEventMenuRight(new EventMenuRight() {
+            @Override
+            public void onRefresh() {
+                refresh();
+            }
+        });
+        
+        this.setLayout(new BorderLayout());
+        
+        editAccountButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        editAccountButton.addActionListener(new ActionListener () {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                GlassPanePopup.showPopup(new EditAccount());
+            }
+        });
+        
+        if (Service.getInstance().getUserAccount() != null) {
+            if (Service.getInstance().getUserAccount().getImage().length() > 0) {
+                imageAvatar.setImage(Service.getInstance().getUserAccount().getImage());
+            }
+            lbUsername.setText(Service.getInstance().getUserAccount().getUserName());
+            lbFullName.setText(Service.getInstance().getUserAccount().getFullName());
+        }
+        
+        
+        
+        add(bottom_P, BorderLayout.SOUTH);
+    }
+    
+    public void refresh() {
+        if (Service.getInstance().getUserAccount() != null) {
+            if (Service.getInstance().getUserAccount().getImage().length() > 0) {
+                imageAvatar.setImage(Service.getInstance().getUserAccount().getImage());
+            }
+            lbUsername.setText(Service.getInstance().getUserAccount().getUserName());
+            lbFullName.setText(Service.getInstance().getUserAccount().getFullName());
+        }
+        repaint();
+        revalidate();
     }
 
     /**
@@ -26,30 +81,78 @@ public class Menu_Right extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jLabel1 = new javax.swing.JLabel();
+        bottom_P = new javax.swing.JPanel();
+        imageAvatar = new com.app.swing.ImageAvatar();
+        lbFullName = new javax.swing.JLabel();
+        editAccountButton = new javax.swing.JButton();
+        lbUsername = new javax.swing.JLabel();
 
-        jLabel1.setText("Right");
+        bottom_P.setPreferredSize(new java.awt.Dimension(200, 50));
+
+        imageAvatar.setBorderSize(1);
+        imageAvatar.setImage(new javax.swing.ImageIcon(getClass().getResource("/com/app/icon/user.png"))); // NOI18N
+
+        lbFullName.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        lbFullName.setText("Fullname");
+
+        editAccountButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/app/icon/more_disable.png"))); // NOI18N
+        editAccountButton.setContentAreaFilled(false);
+
+        lbUsername.setFont(new java.awt.Font("Arial", 2, 12)); // NOI18N
+        lbUsername.setForeground(new java.awt.Color(138, 138, 138));
+        lbUsername.setText("username");
+
+        javax.swing.GroupLayout bottom_PLayout = new javax.swing.GroupLayout(bottom_P);
+        bottom_P.setLayout(bottom_PLayout);
+        bottom_PLayout.setHorizontalGroup(
+            bottom_PLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(bottom_PLayout.createSequentialGroup()
+                .addGap(5, 5, 5)
+                .addComponent(imageAvatar, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(bottom_PLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lbFullName)
+                    .addComponent(lbUsername))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 61, Short.MAX_VALUE)
+                .addComponent(editAccountButton)
+                .addGap(1, 1, 1))
+        );
+        bottom_PLayout.setVerticalGroup(
+            bottom_PLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(bottom_PLayout.createSequentialGroup()
+                .addGroup(bottom_PLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(bottom_PLayout.createSequentialGroup()
+                        .addGap(9, 9, 9)
+                        .addComponent(editAccountButton, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(bottom_PLayout.createSequentialGroup()
+                        .addGap(5, 5, 5)
+                        .addGroup(bottom_PLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(bottom_PLayout.createSequentialGroup()
+                                .addComponent(lbFullName)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(lbUsername))
+                            .addComponent(imageAvatar, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap(8, Short.MAX_VALUE))
+        );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(48, 48, 48)
-                .addComponent(jLabel1)
-                .addContainerGap(124, Short.MAX_VALUE))
+            .addGap(0, 200, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(100, 100, 100)
-                .addComponent(jLabel1)
-                .addContainerGap(684, Short.MAX_VALUE))
+            .addGap(0, 800, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel jLabel1;
+    private javax.swing.JPanel bottom_P;
+    private javax.swing.JButton editAccountButton;
+    private com.app.swing.ImageAvatar imageAvatar;
+    private javax.swing.JLabel lbFullName;
+    private javax.swing.JLabel lbUsername;
     // End of variables declaration//GEN-END:variables
 }

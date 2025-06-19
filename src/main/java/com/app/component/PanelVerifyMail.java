@@ -4,6 +4,15 @@
  */
 package com.app.component;
 
+import com.app.event.EventMessage;
+import com.app.event.PublicEvent;
+import com.app.form.Login;
+import com.app.model.Model_Key;
+import com.app.model.Model_Message;
+import com.app.model.Model_Register;
+import com.app.security.KeyUtil;
+import com.app.security.Session;
+import com.app.service.Service;
 import com.app.util.UppercaseDocumentFilter;
 import java.awt.AlphaComposite;
 import java.awt.Color;
@@ -11,6 +20,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
+import java.util.Base64;
 import javax.swing.text.AbstractDocument;
 
 /**
@@ -25,6 +35,7 @@ public class PanelVerifyMail extends javax.swing.JPanel {
     
     private ActionListener eventVerify;
     private ActionListener eventCancel;
+    private Model_Register data;
     
     
     public PanelVerifyMail(ActionListener eventVerify, ActionListener eventCancel) {
@@ -53,6 +64,14 @@ public class PanelVerifyMail extends javax.swing.JPanel {
             txVerifyCode.setText("");
         }
     }
+    
+    public void setVisible(boolean aFlag, Model_Register data) {
+        setVisible(aFlag);
+        this.data = data;     
+    }
+    
+    
+    
     
     @Override
     protected void paintComponent(Graphics g) {
@@ -116,6 +135,11 @@ public class PanelVerifyMail extends javax.swing.JPanel {
         buttonVerify.setForegroundColor(new java.awt.Color(0, 0, 0));
         buttonVerify.setForegroundOver(new java.awt.Color(0, 0, 0));
         buttonVerify.setRadius(30);
+        buttonVerify.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonVerifyActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout customPanel1Layout = new javax.swing.GroupLayout(customPanel1);
         customPanel1.setLayout(customPanel1Layout);
@@ -176,6 +200,29 @@ public class PanelVerifyMail extends javax.swing.JPanel {
                 .addContainerGap(50, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
+
+    private void buttonVerifyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonVerifyActionPerformed
+        Model_Key key = KeyUtil.getInstance().createdKey();
+
+        data.setPubkeyDSA(Base64.getEncoder().encodeToString(key.getDsa_public_key().getEncoded()));
+        data.setPubkeyRSA(Base64.getEncoder().encodeToString(key.getRsa_public_key().getEncoded()));
+        data.setOtp(txVerifyCode.getText());
+        
+        PublicEvent.getInstance().getEventLogin().register(data, new EventMessage() {
+            @Override
+            public void callMessage(Model_Message message) {
+
+                if (!message.isAction()) {
+                    Login.getInstance().showMessage(PanelMessage.MessageType.SUCCESS, message.getMessage());
+                } else {
+                    KeyUtil.getInstance().saveKey(Service.getInstance().getUserAccount().getUserId(), key);
+                    Session.getInstance().setKey(key);
+                    PublicEvent.getInstance().getEventMain().initChat();
+                    setVisible(false);
+                }
+            }
+        });
+    }//GEN-LAST:event_buttonVerifyActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
