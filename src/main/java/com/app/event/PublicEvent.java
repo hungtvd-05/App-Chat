@@ -9,6 +9,7 @@ public class PublicEvent {
     private EventMain eventMain;
     private EventMenuLeft eventMenuLeft;
     private EventMenuRight eventMenuRight;
+    private EventChatBody eventChatBody;
     
     public static PublicEvent getInstance() {
         if (instance == null) {
@@ -67,6 +68,14 @@ public class PublicEvent {
 
     public void setEventMenuRight(EventMenuRight eventMenuRight) {
         this.eventMenuRight = eventMenuRight;
+    }
+
+    public EventChatBody getEventChatBody() {
+        return eventChatBody;
+    }
+
+    public void setEventChatBody(EventChatBody eventChatBody) {
+        this.eventChatBody = eventChatBody;
     }
     
     

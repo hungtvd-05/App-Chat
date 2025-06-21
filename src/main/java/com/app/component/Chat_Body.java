@@ -2,6 +2,8 @@ package com.app.component;
 
 import com.app.emoji.Emogi;
 import com.app.enums.MessageType;
+import com.app.event.EventChatBody;
+import com.app.event.PublicEvent;
 import com.app.model.History;
 import com.app.model.Model_Image;
 import com.app.model.Model_Save_Message;
@@ -17,12 +19,14 @@ import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
 import java.util.List;
 import javax.swing.Icon;
+import javax.swing.JLabel;
 import javax.swing.JScrollBar;
 import net.miginfocom.swing.MigLayout;
 
 public class Chat_Body extends javax.swing.JPanel {
 
     private UserAccount user;
+    private JLabel sendStatus;
 
     public Chat_Body() {
         initComponents();
@@ -34,8 +38,28 @@ public class Chat_Body extends javax.swing.JPanel {
         sp.setVerticalScrollBar(new JScrollBar());
         sp.getVerticalScrollBar().setBackground(Color.WHITE);
         javax.swing.JPanel spacer = new javax.swing.JPanel();
-        spacer.setBackground(new java.awt.Color(255, 255, 255)); // Cùng màu nền với body
+        spacer.setBackground(new java.awt.Color(255, 255, 255));
         body.add(spacer, "grow, push, wrap");
+        
+        PublicEvent.getInstance().setEventChatBody(new EventChatBody() {
+            @Override
+            public void showSending() {
+                removeItemSendStatus();
+                addItemSendStatus("Sending...");
+            }
+
+            @Override
+            public void showSent() {
+                removeItemSendStatus();
+                addItemSendStatus("Sent");
+            }
+
+            @Override
+            public void clearSendStatus() {
+                removeItemSendStatus();
+                
+            }
+        });
     }
 
     public void setUser(UserAccount user) {
@@ -115,6 +139,26 @@ public class Chat_Body extends javax.swing.JPanel {
                 }
             }
         });
+    }
+    
+    public void addItemSendStatus(String message) {
+        sendStatus = new javax.swing.JLabel(message);
+        sendStatus.setFont(new java.awt.Font("Arial", java.awt.Font.ITALIC, 10));
+        sendStatus.setForeground(new java.awt.Color(150, 150, 150));
+        sendStatus.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        body.add(sendStatus, "wrap, al right, w 100::80%");
+        body.repaint();
+        body.revalidate();
+        scrollToBottom();
+    }
+    
+    public void removeItemSendStatus() {
+        if (sendStatus != null) {
+            body.remove(sendStatus);
+            sendStatus = null;
+            body.repaint();
+            body.revalidate();
+        }
     }
 
     public void addItemLeft(Model_Send_Message data) {

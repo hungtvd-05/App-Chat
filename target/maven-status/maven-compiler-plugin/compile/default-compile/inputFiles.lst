@@ -35,6 +35,7 @@ D:\workspace\java\App-Chat\src\main\java\com\app\emoji\Emogi.java
 D:\workspace\java\App-Chat\src\main\java\com\app\emoji\Model_Emoji.java
 D:\workspace\java\App-Chat\src\main\java\com\app\enums\MessageType.java
 D:\workspace\java\App-Chat\src\main\java\com\app\event\EventChat.java
+D:\workspace\java\App-Chat\src\main\java\com\app\event\EventChatBody.java
 D:\workspace\java\App-Chat\src\main\java\com\app\event\EventClick.java
 D:\workspace\java\App-Chat\src\main\java\com\app\event\EventFileReceiver.java
 D:\workspace\java\App-Chat\src\main\java\com\app\event\EventFileSender.java

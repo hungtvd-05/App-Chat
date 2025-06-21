@@ -28,7 +28,10 @@ public class Chat extends javax.swing.JPanel {
         PublicEvent.getInstance().addEventChat(new EventChat() {
             @Override
             public void sendMessage(Model_Send_Message data) {
+                PublicEvent.getInstance().getEventChatBody().clearSendStatus();
+                PublicEvent.getInstance().getEventChatBody().showSending();
                 chatBody.addItemRight(data);
+                PublicEvent.getInstance().getEventChatBody().showSent();
             }
 
             @Override

@@ -45,4 +45,25 @@ public class UserAccount {
         }
     }
     
+    public JSONObject toJsonObject() {
+        try {
+            JSONObject obj = new JSONObject();
+            obj.put("userId", userId);
+            obj.put("userName", userName);
+            obj.put("fullName", fullName);
+            obj.put("mail", mail);
+            obj.put("phone", phone);
+            obj.put("gender", gender);
+            obj.put("status", status);
+            obj.put("image", image);
+            obj.put("pubkeyDSA", pubkeyDSA);
+            obj.put("pubkeyRSA", pubkeyRSA);
+            return obj;
+        } catch (Exception e) {
+            System.err.print(e);
+            return null;
+        }
+    }
+    
+      
 }

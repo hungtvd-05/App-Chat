@@ -91,6 +91,25 @@ public class Service {
                 }
             });
             
+            client.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
+                @Override
+                public void call(Object... os) {
+                    PublicEvent.getInstance().getEventMain().showLoading(false);
+                    if (userAccount != null) {
+                        client.emit("update_status", userAccount.toJsonObject()) ;   
+                    }
+                       
+                }
+            });
+            
+            client.on(Socket.EVENT_DISCONNECT, new Emitter.Listener() {
+                @Override
+                public void call(Object... os) {
+                    PublicEvent.getInstance().getEventMain().showLoading(true);
+                }
+            });
+            
+            
             client.open();
         } catch (URISyntaxException ex) {
             System.getLogger(Service.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);

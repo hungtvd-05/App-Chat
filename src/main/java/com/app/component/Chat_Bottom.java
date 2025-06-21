@@ -30,6 +30,7 @@ public class Chat_Bottom extends javax.swing.JPanel {
     private UserAccount user;
     private MessageDAO messageDAO;
 
+
     public UserAccount getUser() {
         return user;
     }
@@ -43,6 +44,8 @@ public class Chat_Bottom extends javax.swing.JPanel {
         initComponents();
         init();
     }
+    
+    
 
     private void init() {
         messageDAO = new MessageDAO();
@@ -111,12 +114,15 @@ public class Chat_Bottom extends javax.swing.JPanel {
     private void send(Model_Send_Message data) {
         Model_Save_Message saveMessage;
         try {
+            PublicEvent.getInstance().getEventChatBody().clearSendStatus();
+            PublicEvent.getInstance().getEventChatBody().showSending();
             saveMessage = ChatManager.getInstance().sendMessage(data, user);
             Service.getInstance().getClient().emit("send_to_user", data.toJSONObject(), new Ack() {
                 @Override
                 public void call(Object... os) {
                     saveMessage.setMesage_id(Long.parseLong(os[0].toString()));
                     ChatManager.getInstance().saveMessage(saveMessage);
+                    PublicEvent.getInstance().getEventChatBody().showSent();
                 }
             });
         } catch (Exception ex) {

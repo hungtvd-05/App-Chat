@@ -20,6 +20,7 @@ com\app\component\CustomToggleButton$1.class
 com\app\component\Chat_Bottom.class
 com\app\event\PublicEvent.class
 com\app\component\glasspanepopup\DefaultOption.class
+com\app\service\Service$5.class
 com\app\component\PanelLoginAndRegister$2.class
 com\app\component\PanelCover$1.class
 com\app\component\Chat_File.class
@@ -67,6 +68,7 @@ com\app\component\Image_Item$1.class
 com\app\swing\ProgressCircleUI.class
 com\app\swing\ActiveStatus.class
 com\app\model\Model_File_Receiver$2.class
+com\app\service\Service$4.class
 com\app\component\Chat_Right.class
 com\app\component\glasspanepopup\DefaultLayoutCallBack.class
 com\app\dao\KeyDAO.class
@@ -120,6 +122,7 @@ com\app\form\Menu_Left$4.class
 com\app\component\Chat_Title.class
 com\app\service\Service$1.class
 com\app\event\EventMain.class
+com\app\component\Chat_Body$3.class
 com\app\component\Chat_Item.class
 com\app\swing\Line.class
 com\app\component\PanelLoginAndRegister$3.class
@@ -133,6 +136,7 @@ com\app\component\glasspanepopup\GlassPanePopup$1.class
 com\app\security\ChatCrypto.class
 com\app\form\Login$1$2.class
 com\app\component\Chat_Bottom$4.class
+com\app\event\EventChatBody.class
 com\app\form\Menu_Left$3.class
 com\app\component\Panel_More.class
 com\app\form\EditAccount.class
