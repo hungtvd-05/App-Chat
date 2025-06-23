@@ -11,7 +11,6 @@ com\app\swing\Progress.class
 com\app\component\PanelVerifyMail$1.class
 com\app\event\EventFileReceiver.class
 com\app\form\Login$4.class
-com\app\component\PanelCover$2.class
 com\app\form\Menu_Left$2.class
 com\app\component\PanelLoginAndRegister$1.class
 com\app\event\EventFileSender.class
@@ -20,9 +19,9 @@ com\app\component\CustomToggleButton$1.class
 com\app\component\Chat_Bottom.class
 com\app\event\PublicEvent.class
 com\app\component\glasspanepopup\DefaultOption.class
+com\app\model\Model_Sending_Status.class
 com\app\service\Service$5.class
 com\app\component\PanelLoginAndRegister$2.class
-com\app\component\PanelCover$1.class
 com\app\component\Chat_File.class
 com\app\event\EventLogin.class
 com\app\component\CustomToggleButton.class
@@ -43,6 +42,7 @@ com\app\swing\ComponentResizer.class
 com\app\component\Chat_Body.class
 com\app\component\PanelVerifyMail$2.class
 com\app\model\Model_Update_User.class
+com\app\service\Service$6.class
 com\app\component\glasspanepopup\GlassPanePopup$2.class
 com\app\component\CustomButton.class
 com\app\swing\ModernScrollBarUI$InvisibleScrollBarButton.class
@@ -61,7 +61,9 @@ com\app\component\PanelVerifyMail.class
 com\app\model\History.class
 com\app\component\OptionButton.class
 com\app\component\Panel_More$1.class
+com\app\event\EventItemPeople.class
 com\app\event\EventMenuLeft.class
+com\app\component\Item_People$2.class
 com\app\model\Model_Request_File.class
 com\app\component\CustomPasswordField$2.class
 com\app\component\Image_Item$1.class
@@ -86,8 +88,10 @@ com\app\service\Service$3.class
 com\app\model\Model_File_Receiver$1.class
 com\app\form\Menu_Right$2.class
 com\app\component\PanelCover.class
+com\app\component\Typing.class
 com\app\form\Login$1$1.class
 com\app\component\CustomButton$1.class
+com\app\component\Chat_Bottom$5.class
 com\app\event\EventClick.class
 com\app\form\Login$1.class
 com\app\component\PanelLoginAndRegister$1$1.class

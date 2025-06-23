@@ -21,12 +21,16 @@ import java.util.List;
 import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.JScrollBar;
+import lombok.Getter;
 import net.miginfocom.swing.MigLayout;
 
 public class Chat_Body extends javax.swing.JPanel {
 
+    @Getter
     private UserAccount user;
     private JLabel sendStatus;
+    private Typing typing = new Typing();
+    private javax.swing.Timer typingTimer;
 
     public Chat_Body() {
         initComponents();
@@ -40,7 +44,7 @@ public class Chat_Body extends javax.swing.JPanel {
         javax.swing.JPanel spacer = new javax.swing.JPanel();
         spacer.setBackground(new java.awt.Color(255, 255, 255));
         body.add(spacer, "grow, push, wrap");
-        
+
         PublicEvent.getInstance().setEventChatBody(new EventChatBody() {
             @Override
             public void showSending() {
@@ -57,8 +61,28 @@ public class Chat_Body extends javax.swing.JPanel {
             @Override
             public void clearSendStatus() {
                 removeItemSendStatus();
-                
+
             }
+
+            @Override
+            public void showTypingStatus(String username) {
+                if (user.getUserName().equals(username)) {
+                    addTypingStatus();
+                    if (typingTimer != null && typingTimer.isRunning()) {
+                        typingTimer.restart();
+                    } else {
+                        typingTimer = new javax.swing.Timer(1000, e -> removeTypingStatus());
+                        typingTimer.setRepeats(false);
+                        typingTimer.start();
+                    }
+                }
+            }
+
+            @Override
+            public void clearTypingStatus() {
+                removeTypingStatus();
+            }
+
         });
     }
 
@@ -140,7 +164,20 @@ public class Chat_Body extends javax.swing.JPanel {
             }
         });
     }
-    
+
+    public void addTypingStatus() {
+        body.add(typing, "wrap, al left, w 100::80%");
+        body.repaint();
+        body.revalidate();
+        scrollToBottom();
+    }
+
+    public void removeTypingStatus() {
+        body.remove(typing);
+        body.repaint();
+        body.revalidate();
+    }
+
     public void addItemSendStatus(String message) {
         sendStatus = new javax.swing.JLabel(message);
         sendStatus.setFont(new java.awt.Font("Arial", java.awt.Font.ITALIC, 10));
@@ -151,7 +188,7 @@ public class Chat_Body extends javax.swing.JPanel {
         body.revalidate();
         scrollToBottom();
     }
-    
+
     public void removeItemSendStatus() {
         if (sendStatus != null) {
             body.remove(sendStatus);
@@ -177,16 +214,16 @@ public class Chat_Body extends javax.swing.JPanel {
             item.setText("");
             item.setTime(data.getTime());
             item.setImage(new Model_Image(
-                        data.getId(),
-                        data.getBlurHash(),
-                        data.getFileExtension(),
-                        data.getWidth_blur(),
-                        data.getHeight_blur(),
-                        data.getEncryptedContent(),
-                        data.getSignature(),
-                        data.getEncryptedAESKey(),
-                        data.getPubkeyDSAFromUser()
-                ));
+                    data.getId(),
+                    data.getBlurHash(),
+                    data.getFileExtension(),
+                    data.getWidth_blur(),
+                    data.getHeight_blur(),
+                    data.getEncryptedContent(),
+                    data.getSignature(),
+                    data.getEncryptedAESKey(),
+                    data.getPubkeyDSAFromUser()
+            ));
             body.add(item, "wrap, w 100::80%");
         }
         scrollToBottom();
@@ -213,7 +250,7 @@ public class Chat_Body extends javax.swing.JPanel {
             if (Utils.isImageFileExists(relativePath)) {
                 item.setImage(relativePath);
             } else {
-                
+
                 item.setImage(new Model_Image(
                         data.getId(),
                         data.getBlurHash(),
@@ -287,7 +324,7 @@ public class Chat_Body extends javax.swing.JPanel {
                 item.setImage(relativePath);
             } else if (data.getFile() != null) {
                 item.setImage(data.getFile());
-            } 
+            }
 //            else if (data.getBlurHash().length() > 0) {
 //                item.setImage(new Model_Image(data.getId(), data.getBlurHash(), data.getFileExtension(), data.getWidth_blur(), data.getHeight_blur(), data.getContent(), data.getSignature(), data.getEncryptedAESKey(), data.getPubkeyDSAFromUser()));
 //            }

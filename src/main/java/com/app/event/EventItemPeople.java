@@ -8,12 +8,7 @@ package com.app.event;
  *
  * @author ngoan
  */
-public interface EventChatBody {
-    
-    public void showSending();
-    public void showSent();
-    public void clearSendStatus();
-    public void showTypingStatus(String username);
-    public void clearTypingStatus();
-    
+public interface EventItemPeople {
+    void showNotification(long fromUserID);
+    void hideNotification(long fromUserID);
 }

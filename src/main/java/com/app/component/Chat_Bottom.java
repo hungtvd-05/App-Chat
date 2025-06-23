@@ -5,6 +5,7 @@ import com.app.enums.MessageType;
 import com.app.event.PublicEvent;
 import com.app.model.Model_Save_Message;
 import com.app.model.Model_Send_Message;
+import com.app.model.Model_Sending_Status;
 import com.app.model.UserAccount;
 import com.app.security.ChatManager;
 import com.app.service.Service;
@@ -23,6 +24,8 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import net.miginfocom.swing.MigLayout;
 
 public class Chat_Bottom extends javax.swing.JPanel {
@@ -64,6 +67,44 @@ public class Chat_Bottom extends javax.swing.JPanel {
                 }
             }
         });
+        
+        txt.getDocument().addDocumentListener(new DocumentListener() {
+            
+            private long lastSent = 0;
+
+            private void sendTyping() {
+                
+                long now = System.currentTimeMillis();
+                Model_Sending_Status mss;
+                if (now - lastSent > 500) {
+                    mss = new Model_Sending_Status(
+                            Service.getInstance().getUserAccount().getUserName(),
+                            user.getUserName()
+                    );
+                    Service.getInstance().getClient().emit("user_typing", mss.toJsonObject());
+                    lastSent = now;
+                }
+            }
+            
+            
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                sendTyping();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                sendTyping();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                sendTyping();
+            }
+        });
+        
+        
+        
         txt.setHintText("Write message here...");
         scroll.setViewportView(txt);
         add(scroll, "w 100%");

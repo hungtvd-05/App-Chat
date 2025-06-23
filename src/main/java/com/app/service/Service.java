@@ -6,6 +6,7 @@ import com.app.model.Model_File_Receiver;
 import com.app.model.Model_File_Sender;
 import com.app.model.Model_Image;
 import com.app.model.Model_Send_Message;
+import com.app.model.Model_Sending_Status;
 import com.app.model.UserAccount;
 import com.app.security.ChatManager;
 import io.socket.client.IO;
@@ -88,8 +89,20 @@ public class Service {
                         message.setContent("");
                     }
                     PublicEvent.getInstance().getEventChat().reiceveMessage(message);
+                    PublicEvent.getInstance().getEventItemPeople().showNotification(message.getFromUserID());
                 }
             });
+            
+            client.on("user_typing", new Emitter.Listener() {
+                @Override
+                public void call(Object... os) {
+                    if (os.length > 0) {
+                        Model_Sending_Status mss = new Model_Sending_Status(os[0]);
+                        PublicEvent.getInstance().getEventChatBody().showTypingStatus(mss.getFromUsername());
+                    }
+                }
+            });
+
             
             client.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
                 @Override

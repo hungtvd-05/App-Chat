@@ -10,6 +10,7 @@ public class PublicEvent {
     private EventMenuLeft eventMenuLeft;
     private EventMenuRight eventMenuRight;
     private EventChatBody eventChatBody;
+    private EventItemPeople eventItemPeople;
     
     public static PublicEvent getInstance() {
         if (instance == null) {
@@ -77,6 +78,16 @@ public class PublicEvent {
     public void setEventChatBody(EventChatBody eventChatBody) {
         this.eventChatBody = eventChatBody;
     }
+
+    public EventItemPeople getEventItemPeople() {
+        return eventItemPeople;
+    }
+
+    public void setEventItemPeople(EventItemPeople eventItemPeople) {
+        this.eventItemPeople = eventItemPeople;
+    }
+    
+    
     
     
     

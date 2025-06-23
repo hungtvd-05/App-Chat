@@ -29,6 +29,7 @@ D:\workspace\java\App-Chat\src\main\java\com\app\component\PanelCover.java
 D:\workspace\java\App-Chat\src\main\java\com\app\component\PanelLoginAndRegister.java
 D:\workspace\java\App-Chat\src\main\java\com\app\component\PanelMessage.java
 D:\workspace\java\App-Chat\src\main\java\com\app\component\PanelVerifyMail.java
+D:\workspace\java\App-Chat\src\main\java\com\app\component\Typing.java
 D:\workspace\java\App-Chat\src\main\java\com\app\dao\KeyDAO.java
 D:\workspace\java\App-Chat\src\main\java\com\app\dao\MessageDAO.java
 D:\workspace\java\App-Chat\src\main\java\com\app\emoji\Emogi.java
@@ -40,6 +41,7 @@ D:\workspace\java\App-Chat\src\main\java\com\app\event\EventClick.java
 D:\workspace\java\App-Chat\src\main\java\com\app\event\EventFileReceiver.java
 D:\workspace\java\App-Chat\src\main\java\com\app\event\EventFileSender.java
 D:\workspace\java\App-Chat\src\main\java\com\app\event\EventImageView.java
+D:\workspace\java\App-Chat\src\main\java\com\app\event\EventItemPeople.java
 D:\workspace\java\App-Chat\src\main\java\com\app\event\EventLogin.java
 D:\workspace\java\App-Chat\src\main\java\com\app\event\EventMain.java
 D:\workspace\java\App-Chat\src\main\java\com\app\event\EventMenuLeft.java
@@ -69,6 +71,7 @@ D:\workspace\java\App-Chat\src\main\java\com\app\model\Model_Request_File.java
 D:\workspace\java\App-Chat\src\main\java\com\app\model\Model_Save_Key.java
 D:\workspace\java\App-Chat\src\main\java\com\app\model\Model_Save_Message.java
 D:\workspace\java\App-Chat\src\main\java\com\app\model\Model_Send_Message.java
+D:\workspace\java\App-Chat\src\main\java\com\app\model\Model_Sending_Status.java
 D:\workspace\java\App-Chat\src\main\java\com\app\model\Model_Update_User.java
 D:\workspace\java\App-Chat\src\main\java\com\app\model\UserAccount.java
 D:\workspace\java\App-Chat\src\main\java\com\app\security\ChatCrypto.java

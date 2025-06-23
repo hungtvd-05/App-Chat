@@ -1,5 +1,6 @@
 package com.app.component;
 
+import com.app.event.EventItemPeople;
 import com.app.event.PublicEvent;
 import com.app.model.UserAccount;
 import java.awt.Color;
@@ -30,6 +31,7 @@ public class Item_People extends javax.swing.JPanel {
     }
     
     private void init() {
+        notificationStatus.setVisible(false);
         addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
@@ -47,9 +49,27 @@ public class Item_People extends javax.swing.JPanel {
             public void mouseReleased(MouseEvent e) {
                 if (mouseOver) {
                     PublicEvent.getInstance().getEventMain().selectUser(userAccount);
+                    notificationStatus.setVisible(false);
                 }
             }
             
+        });
+        
+        PublicEvent.getInstance().setEventItemPeople(new EventItemPeople() {
+            @Override
+            public void showNotification(long fromUserID) {
+                if (userAccount.getUserId() == fromUserID) {
+                    notificationStatus.setVisible(true);
+                }
+                
+            }
+
+            @Override
+            public void hideNotification(long fromUserID) {
+                if (userAccount.getUserId() == fromUserID) {
+                    notificationStatus.setVisible(false);
+                }
+            }
         });
     }
 
@@ -62,12 +82,28 @@ public class Item_People extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        notificationStatus = new com.app.component.CustomPanel();
         imageAvatar = new com.app.swing.ImageAvatar();
         lb = new javax.swing.JLabel();
         lbStatus = new javax.swing.JLabel();
         activeStatus = new com.app.swing.ActiveStatus();
 
         setBackground(new java.awt.Color(255, 255, 255));
+
+        notificationStatus.setBorderColor(new java.awt.Color(255, 102, 102));
+        notificationStatus.setColor(new java.awt.Color(255, 102, 102));
+        notificationStatus.setRadius(100);
+
+        javax.swing.GroupLayout notificationStatusLayout = new javax.swing.GroupLayout(notificationStatus);
+        notificationStatus.setLayout(notificationStatusLayout);
+        notificationStatusLayout.setHorizontalGroup(
+            notificationStatusLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 10, Short.MAX_VALUE)
+        );
+        notificationStatusLayout.setVerticalGroup(
+            notificationStatusLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 10, Short.MAX_VALUE)
+        );
 
         imageAvatar.setBorderSize(1);
         imageAvatar.setImage(new javax.swing.ImageIcon(getClass().getResource("/com/app/icon/user.png"))); // NOI18N
@@ -95,20 +131,28 @@ public class Item_People extends javax.swing.JPanel {
                         .addComponent(lbStatus)
                         .addGap(3, 3, 3)
                         .addComponent(activeStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 8, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(92, Short.MAX_VALUE))))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 70, Short.MAX_VALUE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(notificationStatus, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(12, 12, 12))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(lb)
-                        .addGap(1, 1, 1)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(lbStatus, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(activeStatus, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                    .addComponent(imageAvatar, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addContainerGap()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(lb)
+                                .addGap(1, 1, 1)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(lbStatus, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(activeStatus, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                            .addComponent(imageAvatar, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(20, 20, 20)
+                        .addComponent(notificationStatus, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -119,5 +163,6 @@ public class Item_People extends javax.swing.JPanel {
     private com.app.swing.ImageAvatar imageAvatar;
     private javax.swing.JLabel lb;
     private javax.swing.JLabel lbStatus;
+    private com.app.component.CustomPanel notificationStatus;
     // End of variables declaration//GEN-END:variables
 }
